@@ -1,7 +1,7 @@
 class Task:
     def __init__(self, title):
         self.title = title
-    
+
     def to_dict(self):
         task_to_dict = {"title": self.title}
         return task_to_dict
