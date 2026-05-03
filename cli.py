@@ -4,10 +4,15 @@ class CLIHandler:
 
     def show_commands(self):
         pass
-    # выводит список всех команд
     
-    def parse_arguments(self):
-        pass
-    # получаем список args из app.run
-    # преобразовываем args в словарь args_dict
-    # возвращаем словарь в app.run
+    def parse_arguments(self, args):
+        args_dict = {}
+
+        if args[0] == "add":
+            args_dict["command"] = "add"
+            if len(args) > 1:
+                args_dict["title"] = args[1]
+        elif args[0] == "list":
+            args_dict["command"] = "list"
+        
+        return args_dict

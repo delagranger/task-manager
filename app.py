@@ -1,11 +1,15 @@
+from cli import CLIHandler
+from manager import TaskManager
+
 class App:
     def __init__(self):
-        pass
+        self.cli = CLIHandler()
+        self.manager = TaskManager()
 
     def run(self, args):
-        pass
-    # получаем args из main, args - список
-    # передаем args в cli.parse_arguments
-    # получаем args_dict из cli.parse_arguments
-    # сравниваем элемент "command" из словаря через условный оператор
-    # в зависимости от команды вызываем различные функции класса TaskManager
+        args_dict = self.cli.parse_arguments(args)
+
+        if args_dict["command"] == "add":
+            self.manager.add_task(args_dict["title"])
+        elif args_dict["command"] == "list":
+            self.manager.list_tasks()
