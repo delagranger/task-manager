@@ -1,18 +1,22 @@
+import argparse
+
 class CLIHandler:
     def __init__(self):
-        pass
+        # PARSER INIT
+        self.parser = argparse.ArgumentParser(
+            prog="main", description="Build your Task-List",
+            add_help=True
+        )
+        self.subparsers = self.parser.add_subparsers(
+            dest="command", required=True)
 
-    def show_commands(self):
-        pass
+        #ADD
+        parser_add = self.subparsers.add_parser("add", help="Add task or group")
+        parser_add.add_argument("title", help="Title of the object")
+
+        #LIST
+        parser_list = self.subparsers.add_parser("list", help="Print all objects")
     
-    def parse_arguments(self, args):
-        args_dict = {}
-
-        if args[0] == "add":
-            args_dict["command"] = "add"
-            if len(args) > 1:
-                args_dict["title"] = args[1]
-        elif args[0] == "list":
-            args_dict["command"] = "list"
-        
-        return args_dict
+    def parse_arguments(self):
+        args = self.parser.parse_args()
+        return args 
