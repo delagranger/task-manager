@@ -10,6 +10,8 @@ class App:
         args = self.cli.parse_arguments()
 
         if args.command == "add":
-            self.manager.add_task(args.title)
+            self.manager.add(args.title)
         elif args.command == "list":
-            self.manager.list_tasks()
+            self.manager.list()
+        elif args.command == "delete":
+            self.manager.delete(args.title)

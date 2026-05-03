@@ -16,6 +16,10 @@ class CLIHandler:
 
         #LIST
         parser_list = self.subparsers.add_parser("list", help="Print all objects")
+
+        #DELETE
+        parser_delete = self.subparsers.add_parser("delete", help="Delete object")
+        parser_delete.add_argument("title", help="Title of the object")
     
     def parse_arguments(self):
         args = self.parser.parse_args()

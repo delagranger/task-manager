@@ -39,11 +39,17 @@ class TaskManager:
         with open(self.json_path, "w", encoding="utf-8") as f:
             json.dump(task_list, f, indent=2, ensure_ascii=False)
 
-    def list_tasks(self):
+    def list(self):
         for i in self.task_obj_list:
             print(i)
 
-    def add_task(self, title):
+    def add(self, title):
         task = Task(title)
         self.task_obj_list.append(task)
+        self.save_data()
+    
+    def delete(self, title):
+        for i in self.task_obj_list:
+            if i.title == title:
+                self.task_obj_list.remove(i)
         self.save_data()
