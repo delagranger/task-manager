@@ -16,6 +16,7 @@ class CLIHandler:
 
         # LIST
         parser_list = self.subparsers.add_parser("list", help="Print all objects")
+        parser_list.add_argument("sort_type", help="Type of objects sorting")
 
         # DELETE
         parser_delete = self.subparsers.add_parser("delete", help="Delete object")

@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 from objects import Task
 from file_manager import FileManager
 
@@ -5,9 +7,14 @@ class TaskManager:
     def __init__(self):
         self.file_manager = FileManager()
 
-    def list(self):
+    def list(self, sort_type):
+        key = attrgetter(sort_type)
+        self.file_manager.tasks.sort(
+            key=key, reverse=False
+        )
+
         for i in self.file_manager.tasks:
-            print(i)
+            print(f"ЗАДАЧА: {i.title}")
 
     def add(self, title):
         task = Task(title)

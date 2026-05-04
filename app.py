@@ -12,6 +12,6 @@ class App:
         if args.command == "add":
             self.manager.add(args.title)
         elif args.command == "list":
-            self.manager.list()
+            self.manager.list(args.sort_type)
         elif args.command == "delete":
             self.manager.delete(args.title)
