@@ -14,10 +14,11 @@ class TaskManager:
         )
 
         for i in self.file_manager.tasks:
-            print(f"ЗАДАЧА: {i.title}")
+            print(f"ЗАДАЧА: {i.title} | ID: {i.id}")
 
     def add(self, title):
-        task = Task(title)
+        task = Task(title, self.file_manager.next_task_id)
+        self.file_manager.next_task_id += 1
         self.file_manager.tasks.append(task)
         self.file_manager.save_data()
     

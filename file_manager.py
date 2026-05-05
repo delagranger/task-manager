@@ -9,9 +9,7 @@ class FileManager:
         self.tasks, self.next_task_id = self.load_data(self.json_path)
 
     def json_init_and_get_path(self):
-        app_dir = Path.home() / "AppData" / "Roaming" / "TaskManager"
-        app_dir.mkdir(parents=True, exist_ok=True)
-        json_path = app_dir / "data.json"
+        json_path = Path("/workspaces/task-manager/tasks.json") # сменить на рабочую директорию при необходимости
         json_format = {
             "next_task_id": 0, 
             "tasks": {}
