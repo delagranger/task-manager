@@ -24,28 +24,28 @@ class TaskManager:
         self.file_manager.tasks.append(task)
         self.file_manager.save_data()
     
-    def delete(self, obj_link):
-        for i in obj_link:
+    def delete(self, id):
+        for i in id:
             for j in self.file_manager.tasks:
-                if str(j.id) == i or j.title == i:
+                if str(j.id) == i:
                     self.file_manager.tasks.remove(j)
                     break
 
         self.file_manager.save_data()
     
-    def set_status(self, obj_link, status):
-        for i in obj_link:
+    def set_status(self, id, status):
+        for i in id:
             for j in self.file_manager.tasks:
-                if str(j.id) == i or j.title == i:
+                if str(j.id) == i:
                     j.status = status
                     break
         
         self.file_manager.save_data()
     
-    def format(self, obj_link, title, status):
-        for i in obj_link:
+    def format(self, id, title, status):
+        for i in id:
             for j in self.file_manager.tasks:
-                if str(j.id) == i or j.title == i:
+                if str(j.id) == i:
                     j.title = title
                     j.status = status
                     break

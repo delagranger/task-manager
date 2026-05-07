@@ -18,8 +18,8 @@ class App:
         elif args.command == "list":
             self.manager.list(args.sort_type)
         elif args.command == "delete":
-            self.manager.delete(args.obj_link)
+            self.manager.delete(args.id)
         elif args.command == "set_status":
-            self.manager.set_status(args.obj_link, args.status)
+            self.manager.set_status(args.id, args.status)
         elif args.command == "format":
-            self.manager.format(args.obj_link, args.title, args.status)
+            self.manager.format(args.id, args.title, args.status)
