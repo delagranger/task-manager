@@ -10,7 +10,9 @@ class FileManager:
         self.tasks, self.groups, self.next_task_id, self.next_group_id = self.load_data(self.json_path)
 
     def json_init_and_get_path(self):
-        json_path = Path("C:/Auguste/Projects/Python/task-manager/data/data.json") # сменить на рабочую директорию при необходимости
+        json_path = Path(
+            "C:/Auguste/Projects/Python/task-manager/data/data.json"
+            ) # сменить на рабочую директорию при необходимости
         json_format = {
             "next_task_id": 0, 
             "next_group_id": "g0",
@@ -30,13 +32,13 @@ class FileManager:
 
         tasks = []
         for t in data["tasks"]:
-            t = Task.from_dict(t)
-            tasks.append(t)
+            task = Task.from_dict(t)
+            tasks.append(task)
         
         groups = []
         for g in data["groups"]:
-            g = Group.from_dict(g)
-            groups.append(g)
+            group = Group.from_dict(g)
+            groups.append(group)
 
         return tasks, groups, data["next_task_id"], data["next_group_id"]
 

@@ -18,10 +18,10 @@ class TaskManager:
 
             for i in sorted_tasks:
                 print(f"""
-                    ЗАДАЧА: {i.title}
-                    ID: {i.id}
-                    СТАТУС: {i.status}
-                    ГРУППА: {i.group}
+ЗАДАЧА: {i.title}
+ID: {i.id}
+СТАТУС: {i.status}
+ГРУППА: {i.group}
                     """)
         elif obj_type == "group":
             sorted_groups = sorted(self.file_manager.groups,
@@ -30,8 +30,8 @@ class TaskManager:
 
             for i in sorted_groups:
                 print(f"""
-                    ГРУППА: {i.title}
-                    ID: {i.id}
+ГРУППА: {i.title}
+ID: {i.id}
                     """)
 
     def add(self, obj_type, title, status, group):

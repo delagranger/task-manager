@@ -40,12 +40,12 @@ class CLIHandler:
 
         # DELETE
         parser_delete = self.subparsers.add_parser("delete", help="Delete object")
-        parser_delete.add_argument("id", nargs="+", help="Objects ID")
+        parser_delete.add_argument("id", nargs='+', help="Objects ID")
 
         # SET_STATUS
         parser_setstatus = self.subparsers.add_parser("set_status", help="Delete object")
         parser_setstatus.add_argument("id", 
-                                      nargs="+", 
+                                      nargs='+', 
                                       help="Objects ID")
         parser_setstatus.add_argument("status",
                                 choices=["active", "frozen", "finished"],
@@ -53,7 +53,7 @@ class CLIHandler:
     
         # FORMAT
         parser_format = self.subparsers.add_parser("format", help="Format object")
-        parser_format.add_argument("id", nargs="+", 
+        parser_format.add_argument("id", nargs='+', 
                                    help="Objects ID")
         parser_format.add_argument("title", 
                                    help="Format object`s title")
