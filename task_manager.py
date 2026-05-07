@@ -14,10 +14,12 @@ class TaskManager:
         )
 
         for i in self.file_manager.tasks:
-            print(f"ЗАДАЧА: {i.title} | ID: {i.id}")
+            print(f"ЗАДАЧА: {i.title} | ID: {i.id} | STATUS: {i.status}")
 
-    def add(self, title):
-        task = Task(title, self.file_manager.next_task_id)
+    def add(self, title, status):
+        task = Task(title, 
+                    self.file_manager.next_task_id,
+                    status)
         self.file_manager.next_task_id += 1
         self.file_manager.tasks.append(task)
         self.file_manager.save_data()
@@ -25,7 +27,7 @@ class TaskManager:
     def delete(self, obj_link):
         for i in obj_link:
             for j in self.file_manager.tasks:
-                if int(j.id) == i or j.title == i:
+                if str(j.id) == i or j.title == i:
                     self.file_manager.tasks.remove(j)
                     break
 

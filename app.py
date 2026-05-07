@@ -8,9 +8,13 @@ class App:
 
     def run(self):
         args = self.cli.parse_arguments()
+        # получение команды и параметров из консоли 
+        # в виде пространства имен
+        # прим. args = Namespace(command='delete', obj_link=['1', '2'])
 
+        # вызов различных функций manager
         if args.command == "add":
-            self.manager.add(args.title)
+            self.manager.add(args.title, args.status)
         elif args.command == "list":
             self.manager.list(args.sort_type)
         elif args.command == "delete":

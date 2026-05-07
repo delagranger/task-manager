@@ -13,10 +13,16 @@ class CLIHandler:
         # ADD
         parser_add = self.subparsers.add_parser("add", help="Add task or group")
         parser_add.add_argument("title", help="Title of the object")
+        parser_add.add_argument("status",
+                                choices=["active", "frozen", "finished"],
+                                default="active",
+                                help="Task status")
 
         # LIST
         parser_list = self.subparsers.add_parser("list", help="Print all objects")
-        parser_list.add_argument("sort_type", help="Type of objects sorting")
+        parser_list.add_argument("sort_type", 
+                                 choices=["title", "id", "status"],
+                                 help="Type of objects sorting")
 
         # DELETE
         parser_delete = self.subparsers.add_parser("delete", help="Delete object")
