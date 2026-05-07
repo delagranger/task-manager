@@ -22,10 +22,11 @@ class TaskManager:
         self.file_manager.tasks.append(task)
         self.file_manager.save_data()
     
-    def delete(self, title):
-        for i in self.file_manager.tasks:
-            if i.title == title:
-                self.file_manager.tasks.remove(i)
-                break
+    def delete(self, obj_link):
+        for i in obj_link:
+            for j in self.file_manager.tasks:
+                if int(j.id) == i or j.title == i:
+                    self.file_manager.tasks.remove(j)
+                    break
 
         self.file_manager.save_data()

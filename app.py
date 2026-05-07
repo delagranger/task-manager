@@ -14,4 +14,4 @@ class App:
         elif args.command == "list":
             self.manager.list(args.sort_type)
         elif args.command == "delete":
-            self.manager.delete(args.title)
+            self.manager.delete(args.obj_link)

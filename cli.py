@@ -20,7 +20,7 @@ class CLIHandler:
 
         # DELETE
         parser_delete = self.subparsers.add_parser("delete", help="Delete object")
-        parser_delete.add_argument("title", help="Title of the object")
+        parser_delete.add_argument("obj_link", nargs="+", help="Link to object (title, id)")
 
     def parse_arguments(self):
         args = self.parser.parse_args()

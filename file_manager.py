@@ -9,7 +9,7 @@ class FileManager:
         self.tasks, self.next_task_id = self.load_data(self.json_path)
 
     def json_init_and_get_path(self):
-        json_path = Path("/workspaces/task-manager/tasks.json") # сменить на рабочую директорию при необходимости
+        json_path = Path("C:/Auguste/Projects/Python/task-manager/data/data.json") # сменить на рабочую директорию при необходимости
         json_format = {
             "next_task_id": 0, 
             "tasks": {}
