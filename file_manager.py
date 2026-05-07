@@ -15,7 +15,7 @@ class FileManager:
             ) # сменить на рабочую директорию при необходимости
         json_format = {
             "next_task_id": 0, 
-            "next_group_id": "g0",
+            "next_group_id": 0,
             "tasks": {},
             "groups": {}
             }

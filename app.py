@@ -13,13 +13,21 @@ class App:
         # прим. args = Namespace(command='delete', obj_link=['1', '2'])
 
         # вызов различных функций manager
-        if args.command == "add":
-            self.manager.add(args.obj_type, args.title, args.status, args.group)
-        elif args.command == "list":
-            self.manager.list(args.obj_type, args.sort_type)
-        elif args.command == "delete":
-            self.manager.delete(args.id)
-        elif args.command == "set_status":
+        if args.command == "add-task":
+            self.manager.add_task(args.title, args.status, args.group)
+        elif args.command == "add-group":
+            self.manager.add_group(args.title)
+        elif args.command == "list-tasks":
+            self.manager.list_tasks(args.sort)
+        elif args.command == "list-groups":
+            self.manager.list_groups(args.sort)            
+        elif args.command == "delete-task":
+            self.manager.delete_task(args.id)
+        elif args.command == "delete-group":
+            self.manager.delete_group(args.id)
+        elif args.command == "set-status":
             self.manager.set_status(args.id, args.status)
-        elif args.command == "format":
-            self.manager.format(args.id, args.title, args.status, args.group)
+        elif args.command == "format-task":
+            self.manager.format_task(args.id, args.title, args.status, args.group)
+        elif args.command == "format-group":
+            self.manager.format_group(args.id, args.title)
