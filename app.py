@@ -14,12 +14,12 @@ class App:
 
         # вызов различных функций manager
         if args.command == "add":
-            self.manager.add(args.title, args.status)
+            self.manager.add(args.obj_type, args.title, args.status, args.group)
         elif args.command == "list":
-            self.manager.list(args.sort_type)
+            self.manager.list(args.obj_type, args.sort_type)
         elif args.command == "delete":
             self.manager.delete(args.id)
         elif args.command == "set_status":
             self.manager.set_status(args.id, args.status)
         elif args.command == "format":
-            self.manager.format(args.id, args.title, args.status)
+            self.manager.format(args.id, args.title, args.status, args.group)
