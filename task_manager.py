@@ -32,3 +32,11 @@ class TaskManager:
                     break
 
         self.file_manager.save_data()
+    
+    def set_status(self, obj_link, status):
+        for i in obj_link:
+            for j in self.file_manager.tasks:
+                if str(j.id) == i or j.title == i:
+                    j.status = status
+        
+        self.file_manager.save_data()

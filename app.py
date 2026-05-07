@@ -19,3 +19,5 @@ class App:
             self.manager.list(args.sort_type)
         elif args.command == "delete":
             self.manager.delete(args.obj_link)
+        elif args.command == "set_status":
+            self.manager.set_status(args.obj_link, args.status)
