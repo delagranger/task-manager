@@ -12,11 +12,11 @@ class TaskManager:
         key = attrgetter(sort_type)
 
         if obj_type == "task":
-            self.file_manager.tasks.sort(
+            sorted_tasks = sorted(self.file_manager.tasks,
                 key=key, reverse=False
             )
 
-            for i in self.file_manager.tasks:
+            for i in sorted_tasks:
                 print(f"""
                     ЗАДАЧА: {i.title}
                     ID: {i.id}
@@ -24,11 +24,11 @@ class TaskManager:
                     ГРУППА: {i.group}
                     """)
         elif obj_type == "group":
-            self.file_manager.groups.sort(
+            sorted_groups = sorted(self.file_manager.groups,
                 key=key, reverse=False
             )
 
-            for i in self.file_manager.groups:
+            for i in sorted_groups:
                 print(f"""
                     ГРУППА: {i.title}
                     ID: {i.id}
