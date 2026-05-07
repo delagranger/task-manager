@@ -20,9 +20,8 @@ class CLIHandler:
 
         # LIST
         parser_list = self.subparsers.add_parser("list", help="Print all objects")
-        parser_list.add_argument("sort_type", 
-                                 choices=["title", "id", "status"],
-                                 help="Type of objects sorting")
+        parser_list.add_argument("sort_type", choices=["title", "id", "status"],
+                                help="Type of objects sorting")
 
         # DELETE
         parser_delete = self.subparsers.add_parser("delete", help="Delete object")
@@ -34,6 +33,13 @@ class CLIHandler:
         parser_setstatus.add_argument("status",
                                 choices=["active", "frozen", "finished"],
                                 help="Task status")
+    
+        # FORMAT
+        parser_format = self.subparsers.add_parser("format", help="Format object")
+        parser_format.add_argument("obj_link", nargs="+", help="Link to object (title, id)")
+        parser_format.add_argument("title", help="Format object`s title")
+        parser_format.add_argument("status",choices=["active", "frozen", "finished"],
+                                    help="Task status")
 
     def parse_arguments(self):
         args = self.parser.parse_args()

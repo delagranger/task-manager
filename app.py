@@ -21,3 +21,5 @@ class App:
             self.manager.delete(args.obj_link)
         elif args.command == "set_status":
             self.manager.set_status(args.obj_link, args.status)
+        elif args.command == "format":
+            self.manager.format(args.obj_link, args.title, args.status)
