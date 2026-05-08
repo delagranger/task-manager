@@ -8,18 +8,34 @@ class TaskManager:
     def __init__(self):
         self.file_manager = FileManager()
 
-    def list_tasks(self, sort_type):
+    def list_tasks(self, sort_type, status, group, filtered=False):
+        if filtered:
+            if status:
+                filtered_tasks = filter(lambda t: t.status == status, self.file_manager.tasks)
+            if group:
+                filtered_tasks = filter(lambda t: t.group == group, self.file_manager.tasks)
+
+            for i in filtered_tasks:
+                print(f"""
+                    ЗАДАЧА: {i.title}
+                    ID: {i.id}
+                    СТАТУС: {i.status}
+                    ГРУППА: {i.group}
+                    """)
+        else:
+            filtered_tasks = self.file_manager.tasks
+
         key = attrgetter(sort_type)
-        sorted_tasks = sorted(self.file_manager.tasks,
+        sorted_tasks = sorted(filtered_tasks,
                     key=key, reverse=False
             )
 
         for i in sorted_tasks:
             print(f"""
-ЗАДАЧА: {i.title}
-ID: {i.id}
-СТАТУС: {i.status}
-ГРУППА: {i.group}
+                    ЗАДАЧА: {i.title}
+                    ID: {i.id}
+                    СТАТУС: {i.status}
+                    ГРУППА: {i.group}
                     """)
             
     def list_groups(self, sort_type):
