@@ -10,10 +10,11 @@ class TaskManager:
 
     def list_tasks(self, sort_type, status, group, filtered=False):
         if filtered:
+            filtered_tasks = self.file_manager.tasks
             if status:
-                filtered_tasks = filter(lambda t: t.status == status, self.file_manager.tasks)
+                filtered_tasks = filter(lambda t: t.status == status, filtered_tasks)
             if group:
-                filtered_tasks = filter(lambda t: t.group == group, self.file_manager.tasks)
+                filtered_tasks = filter(lambda t: t.group == group, filtered_tasks)
 
             for i in filtered_tasks:
                 print(f"""
