@@ -1,7 +1,7 @@
 from operator import attrgetter
 
-from objects import Task
-from objects import Group
+from task import Task
+from group import Group
 from file_manager import FileManager
 
 class TaskManager:
@@ -9,13 +9,15 @@ class TaskManager:
         self.file_manager = FileManager()
 
     def list_tasks(self, sort_type, status, group, filtered=False):
-        if filtered:
-            filtered_tasks = self.file_manager.tasks
-            if status:
-                filtered_tasks = filter(lambda t: t.status == status, filtered_tasks)
-            if group:
-                filtered_tasks = filter(lambda t: t.group == group, filtered_tasks)
+        filtered_tasks = self.file_manager.tasks
 
+        if filtered:
+            if status:
+                filtered_tasks = list(filter(lambda t: t.status == status, filtered_tasks))
+            if group:
+                filtered_tasks = list(filter(lambda t: t.group == group, filtered_tasks))
+
+            print("filtered tasks -->")
             for i in filtered_tasks:
                 print(f"""
                     ЗАДАЧА: {i.title}
@@ -23,14 +25,14 @@ class TaskManager:
                     СТАТУС: {i.status}
                     ГРУППА: {i.group}
                     """)
-        else:
-            filtered_tasks = self.file_manager.tasks
+            print("--------------")
 
         key = attrgetter(sort_type)
         sorted_tasks = sorted(filtered_tasks,
                     key=key, reverse=False
             )
-
+        
+        print("sorted tasks -->")
         for i in sorted_tasks:
             print(f"""
                     ЗАДАЧА: {i.title}
@@ -38,18 +40,21 @@ class TaskManager:
                     СТАТУС: {i.status}
                     ГРУППА: {i.group}
                     """)
-            
+        print("--------------")
+       
     def list_groups(self, sort_type):
         key = attrgetter(sort_type)
         sorted_groups = sorted(self.file_manager.groups,
                     key=key, reverse=False
             )
 
+        print("sorted groups -->")
         for i in sorted_groups:
             print(f"""
-ГРУППА: {i.title}
-ID: {i.id}
+                    ГРУППА: {i.title}
+                    ID: {i.id}
                     """)
+        print("--------------")
 
     def add_task(self, title, status, group):
         task = Task(title, 
@@ -59,7 +64,7 @@ ID: {i.id}
         self.file_manager.tasks.append(task) 
 
         self.file_manager.save_data()
-    
+
     def add_group(self, title):
         group = Group(title,
                     self.file_manager.next_group_id)
@@ -67,7 +72,7 @@ ID: {i.id}
         self.file_manager.groups.append(group)
 
         self.file_manager.save_data()
-    
+
     def delete_task(self, id):
         for i in id:
             for j in self.file_manager.tasks:
@@ -76,7 +81,7 @@ ID: {i.id}
                     break
 
         self.file_manager.save_data()
-    
+
     def delete_group(self, id):
         for i in id:
             for j in self.file_manager.groups:
@@ -85,7 +90,7 @@ ID: {i.id}
                     break
 
         self.file_manager.save_data()
-    
+
     def set_status(self, id, status):
         for i in id:
             for j in self.file_manager.tasks:
@@ -94,7 +99,7 @@ ID: {i.id}
                     break
         
         self.file_manager.save_data()
-    
+
     def format_task(self, id, title, status, group):
         for i in id:
             for j in self.file_manager.tasks:
@@ -105,7 +110,7 @@ ID: {i.id}
                     break
         
         self.file_manager.save_data()
-    
+
     def format_group(self, id, title):
         for i in id:
             for j in self.file_manager.groups:
