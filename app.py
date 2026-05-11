@@ -13,27 +13,32 @@ class App:
         # прим. args = Namespace(command='delete', obj_link=['1', '2'])
 
         # вызов различных функций manager
-        if args.command == "add-task":
-            self.manager.add_task(args.title, args.status, args.group)
-        elif args.command == "add-group":
-            self.manager.add_group(args.title)
-
-        elif args.command == "list-tasks":
-            self.manager.list_tasks(args.sort, args.status, 
-                                    args.group, args.filter
-                                    )
-        elif args.command == "list-groups":
-            self.manager.list_groups(args.sort) 
-
-        elif args.command == "delete-task":
-            self.manager.delete_task(args.id)
-        elif args.command == "delete-group":
-            self.manager.delete_group(args.id)
-
-        elif args.command == "set-status":
-            self.manager.set_status(args.id, args.status)
+        match args.command:
+            case "add-task":
+                self.manager.add_task(args.title, args.status, 
+                                      args.group
+                                      )
+            case "add-group":
+                self.manager.add_group(args.title)
+            case "list-tasks":
+                self.manager.list_tasks(args.sort, args.status, 
+                                        args.group, args.filter
+                                        )
+            case "list-groups":
+                self.manager.list_groups(args.sort)
+            case "delete-task":
+                self.manager.delete_task(args.id)
+            case "delete-group":
+                self.manager.delete_group(args.id)
+            case "set-status":
+                self.manager.set_status(args.id, args.status)
+            case "format-task":
+                self.manager.format_task(args.id, args.title, 
+                                         args.status, args.group
+                                         )
+            case "format-group":
+                self.manager.format_group(args.id, args.title)
+            case _:
+                print("Unknown command")
             
-        elif args.command == "format-task":
-            self.manager.format_task(args.id, args.title, args.status, args.group)
-        elif args.command == "format-group":
-            self.manager.format_group(args.id, args.title)
+
