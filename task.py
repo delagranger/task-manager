@@ -13,12 +13,4 @@ class Task:
                         }
         return task_to_dict
 
-    @classmethod
-    def from_dict(cls, task_dict):
-        task_obj = cls(task_dict["title"], 
-                       task_dict["id"],
-                       task_dict["status"],
-                       task_dict["group"]
-                       )
-        return task_obj
 
