@@ -7,7 +7,6 @@ import json
 class FileManager:
     def __init__(self):
         self.json_path = self.json_init_and_get_path()
-        self.tasks, self.groups, self.next_task_id, self.next_group_id = self.load_data(self.json_path)
 
     def json_init_and_get_path(self):
         json_path = Path(__file__).parent / "data" / "data.json"
@@ -24,8 +23,14 @@ class FileManager:
         
         return json_path
     
-    def load_data(self, json_path):
-        with open(json_path, "r", encoding="utf-8") as f:
+    def load_ids(self):
+        with open(self.json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        return data["next_task_id"], data["next_group_id"]
+    
+    def load_tasks(self):
+        with open(self.json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         tasks = []
@@ -35,29 +40,38 @@ class FileManager:
                         )
             tasks.append(task)
         
+        return tasks
+    
+    def load_groups(self):   
+        with open(self.json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
         groups = []
         for g in data["groups"]:
             group = Group(g["title"], g["id"])
             groups.append(group)
-
-        return tasks, groups, data["next_task_id"], data["next_group_id"]
-
-    def save_data(self):   
-        tasks = []
-        for t in self.tasks:
-            task = t.to_dict()
-            tasks.append(task)
         
-        groups = []
-        for g in self.groups:
+        return groups
+
+    def save_data(self, tasks, groups,
+                  next_task_id,
+                  next_group_id
+                  ):   
+        tasks_list = []
+        for t in tasks:
+            task = t.to_dict()
+            tasks_list.append(task)
+        
+        groups_list = []
+        for g in groups:
             group = g.to_dict()
-            groups.append(group)
+            groups_list.append(group)
         
         data = {
-            "next_task_id": self.next_task_id, 
-            "next_group_id": self.next_group_id,
-            "tasks": tasks,
-            "groups": groups
+            "next_task_id": next_task_id, 
+            "next_group_id": next_group_id,
+            "tasks": tasks_list,
+            "groups": groups_list
             }
             
         with open(self.json_path, "w", encoding="utf-8") as f:
