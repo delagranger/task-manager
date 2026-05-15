@@ -4,7 +4,7 @@ from cli import CLIHandler
 from task_manager import TaskManager
 
 logging.basicConfig(
-    level="DEBUG",
+    level="INFO",
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
     handlers=[logging.StreamHandler()]
@@ -51,6 +51,6 @@ class App:
             case "format-group":
                 self._manager.format_group(args.id, args.title)
             case _:
-                print("Unknown command")
+                logger.error("Unknown command")
             
 

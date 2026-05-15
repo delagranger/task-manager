@@ -1,8 +1,11 @@
 from operator import attrgetter
+import logging
 
 from task import Task
 from group import Group
 from file_manager import FileManager
+
+logger = logging.getLogger(__name__)
 
 class TaskManager:
     def __init__(self):
@@ -28,6 +31,7 @@ class TaskManager:
                     ГРУППА: {i.group}
                     """)
             print("--------------")
+            logger.info("filter-tasks: success")
 
         key = attrgetter(sort_type)
         sorted_tasks = sorted(filtered_tasks,
@@ -43,6 +47,7 @@ class TaskManager:
                     ГРУППА: {i.group}
                     """)
         print("--------------")
+        logger.info("list-tasks: success")
        
     def list_groups(self, sort_type):
         key = attrgetter(sort_type)
@@ -57,6 +62,7 @@ class TaskManager:
                     ID: {i.id}
                     """)
         print("--------------")
+        logger.info("list-groups: success")
 
     def add_task(self, title, status, group):
         task = Task(title, 
@@ -64,7 +70,8 @@ class TaskManager:
                     status, group
                     )
         self._next_task_id += 1
-        self._tasks.append(task) 
+        self._tasks.append(task)
+        logger.info("add-task: success")
 
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -77,6 +84,7 @@ class TaskManager:
                     )
         self._next_group_id += 1
         self._groups.append(group)
+        logger.info("add-group: success")
 
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -89,6 +97,7 @@ class TaskManager:
                 if j.id == i:
                     self._tasks.remove(j)
                     break
+        logger.info("delete-task: success")
 
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -101,6 +110,7 @@ class TaskManager:
                 if j.id == i:
                     self._groups.remove(j)
                     break
+        logger.info("delete-group: success")
 
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -113,6 +123,7 @@ class TaskManager:
                 if j.id == i:
                     j.status = status
                     break
+        logger.info("set-status: success")
         
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -127,6 +138,7 @@ class TaskManager:
                     j.status = status
                     j.group = group
                     break
+        logger.info("format-task: success")
         
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,
@@ -138,6 +150,7 @@ class TaskManager:
             for j in self._groups:
                 if j.id == i:
                     j.title = title
+        logger.info("gormat-group: success")
         
         self._file_manager.save_data(self._tasks, self._groups,
                                     self._next_task_id,

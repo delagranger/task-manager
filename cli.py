@@ -1,4 +1,7 @@
 import argparse
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CLIHandler:
     def __init__(self):
@@ -8,8 +11,8 @@ class CLIHandler:
             add_help=True
         )
         self._subparsers = self._parser.add_subparsers(
-            dest="command", required=True)
-    
+            dest="command", required=True
+        )
         self._init_add_task()
         self._init_add_group()
         self._init_list_tasks()
@@ -22,6 +25,7 @@ class CLIHandler:
 
     def parse_arguments(self):
         args = self._parser.parse_args()
+        logger.info("Parse args: success")
         return args
 
     def _init_add_task(self):

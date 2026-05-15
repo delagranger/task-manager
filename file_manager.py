@@ -1,8 +1,11 @@
+from pathlib import Path
+import json
+import logging
+
 from task import Task
 from group import Group
 
-from pathlib import Path
-import json
+logger = logging.getLogger(__name__)
 
 class FileManager:
     def __init__(self):
@@ -20,6 +23,7 @@ class FileManager:
         if not json_path.exists():
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(json_format, f, indent=2, ensure_ascii=False)
+            logger.info("JSON CREATED")
         
         return json_path
     
@@ -27,6 +31,7 @@ class FileManager:
         with open(self._json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
+        logger.debug("Load ID`s: success")
         return data["next_task_id"], data["next_group_id"]
     
     def load_tasks(self):
@@ -40,6 +45,7 @@ class FileManager:
                         )
             tasks.append(task)
         
+        logger.debug("Load tasks: success")
         return tasks
     
     def load_groups(self):   
@@ -51,6 +57,7 @@ class FileManager:
             group = Group(g["title"], g["id"])
             groups.append(group)
         
+        logger.debug("Load groups: success")
         return groups
 
     def save_data(self, tasks, groups,
@@ -76,3 +83,5 @@ class FileManager:
             
         with open(self._json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
+
+        logger.info("DATA SAVED")
