@@ -6,9 +6,9 @@ import json
 
 class FileManager:
     def __init__(self):
-        self.json_path = self.json_init_and_get_path()
+        self._json_path = self._json_init_and_get_path()
 
-    def json_init_and_get_path(self):
+    def _json_init_and_get_path(self):
         json_path = Path(__file__).parent / "data" / "data.json"
         json_format = {
             "next_task_id": 0, 
@@ -24,13 +24,13 @@ class FileManager:
         return json_path
     
     def load_ids(self):
-        with open(self.json_path, "r", encoding="utf-8") as f:
+        with open(self._json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         return data["next_task_id"], data["next_group_id"]
     
     def load_tasks(self):
-        with open(self.json_path, "r", encoding="utf-8") as f:
+        with open(self._json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         tasks = []
@@ -43,7 +43,7 @@ class FileManager:
         return tasks
     
     def load_groups(self):   
-        with open(self.json_path, "r", encoding="utf-8") as f:
+        with open(self._json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         groups = []
@@ -74,5 +74,5 @@ class FileManager:
             "groups": groups_list
             }
             
-        with open(self.json_path, "w", encoding="utf-8") as f:
+        with open(self._json_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
