@@ -1,5 +1,17 @@
+import logging
+
 from cli import CLIHandler
 from task_manager import TaskManager
+
+logging.basicConfig(
+    level="DEBUG",
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%d-%m-%Y %H:%M:%S",
+    handlers=[logging.StreamHandler()]
+)
+
+logger = logging.getLogger(__name__)
+logger.info(f"Logging is started, level {logging.getLevelName(logging.getLogger().getEffectiveLevel())}")
 
 class App:
     def __init__(self):
