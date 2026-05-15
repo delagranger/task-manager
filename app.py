@@ -1,17 +1,23 @@
+import os
 import logging
+from dotenv import load_dotenv
 
 from cli import CLIHandler
 from task_manager import TaskManager
 
+load_dotenv()
+log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
+log_level = getattr(logging, log_level_str, logging.INFO)
+
 logging.basicConfig(
-    level="INFO",
+    level=log_level,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S",
     handlers=[logging.StreamHandler()]
 )
 
 logger = logging.getLogger(__name__)
-logger.info(f"Logging is started, level {logging.getLevelName(logging.getLogger().getEffectiveLevel())}")
+logger.info(f"Logging is started, level {log_level_str}")
 
 class App:
     def __init__(self):
