@@ -4,34 +4,42 @@ import logging
 from task import Task
 from group import Group
 from file_manager import FileManager
+from validators import Validator, ValidationError
 
 logger = logging.getLogger(__name__)
 
 class TaskManager:
     def __init__(self):
         self._file_manager = FileManager()
+        self._validator = Validator(self)
         self._next_task_id, self._next_group_id = self._file_manager.load_ids()
         self._tasks = self._file_manager.load_tasks()
         self._groups = self._file_manager.load_groups()
 
     def list_tasks(self, sort_type, status, group, filtered=False):
         filtered_tasks = self._tasks
-        if filtered:
-            if status:
-                filtered_tasks = list(filter(lambda t: t.status == status, filtered_tasks))
-            if group:
-                filtered_tasks = list(filter(lambda t: t.group == group, filtered_tasks))
+        try:
+            if filtered:
+                if status:
+                    self._validator.is_status_exists(status)
+                    filtered_tasks = list(filter(lambda t: t.status == status, filtered_tasks))
+                if group:
+                    self._validator.is_group_exists(group)
+                    filtered_tasks = list(filter(lambda t: t.group == group, filtered_tasks))
 
-            print("filtered tasks -->")
-            for i in filtered_tasks:
-                print(f"""
-                    ЗАДАЧА: {i.title}
-                    ID: {i.id}
-                    СТАТУС: {i.status}
-                    ГРУППА: {i.group}
-                    """)
-            print("--------------")
-            logger.info("filter-tasks: success")
+                print("filtered tasks -->")
+                for i in filtered_tasks:
+                    print(f"""
+                        ЗАДАЧА: {i.title}
+                        ID: {i.id}
+                        СТАТУС: {i.status}
+                        ГРУППА: {i.group}
+                        """)
+                print("--------------")
+                logger.info("filter-tasks: success")
+        except ValidationError as e:
+            logger.error("list-task --filter: failed")
+            print(f"ERROR: {e}")
 
         key = attrgetter(sort_type)
         sorted_tasks = sorted(filtered_tasks,
@@ -65,95 +73,143 @@ class TaskManager:
         logger.info("list-groups: success")
 
     def add_task(self, title, status, group):
-        task = Task(title, 
-                    self._next_task_id,
-                    status, group
-                    )
-        self._next_task_id += 1
-        self._tasks.append(task)
-        logger.info("add-task: success")
+        try:
+            self._validator.is_group_exists(group)
+            
+            task = Task(title, 
+                        self._next_task_id,
+                        status, group
+                        )
+            self._next_task_id += 1
+            self._tasks.append(task)
+            logger.info("add-task: success")
 
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("add-task: failed")
+            print(f"ERROR: {e}")
 
     def add_group(self, title):
-        group = Group(title,
-                    self._next_group_id
-                    )
-        self._next_group_id += 1
-        self._groups.append(group)
-        logger.info("add-group: success")
+        try:
+            self._validator.is_group_not_exists(title)
 
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+            group = Group(title,
+                        self._next_group_id
+                        )
+            self._next_group_id += 1
+            self._groups.append(group)
+            logger.info("add-group: success")
 
-    def delete_task(self, id):
-        for i in id:
-            for j in self._tasks:
-                if j.id == i:
-                    self._tasks.remove(j)
-                    break
-        logger.info("delete-task: success")
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("add-group: failed")
+            print(f"ERROR: {e}")
 
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+    def delete_task(self, ids):
+        try:
+            self._validator.is_task_id_exists(ids)
 
-    def delete_group(self, id):
-        for i in id:
-            for j in self._groups:
-                if j.id == i:
-                    self._groups.remove(j)
-                    break
-        logger.info("delete-group: success")
+            for i in ids:
+                for j in self._tasks:
+                    if j.id == i:
+                        self._tasks.remove(j)
+                        break
+            logger.info("delete-task: success")
 
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("delete-task: failed")
+            print(f"ERROR: {e}")
 
-    def set_status(self, id, status):
-        for i in id:
-            for j in self._tasks:
-                if j.id == i:
-                    j.status = status
-                    break
-        logger.info("set-status: success")
-        
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+    def delete_group(self, ids):
+        try:
+            self._validator.is_group_id_exists(ids)
 
-    def format_task(self, id, title, status, group):
-        for i in id:
-            for j in self._tasks:
-                if j.id == i:
-                    j.title = title
-                    j.status = status
-                    j.group = group
-                    break
-        logger.info("format-task: success")
-        
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+            for i in ids:
+                for j in self._groups:
+                    if j.id == i:
+                        self._groups.remove(j)
+                        break
+            logger.info("delete-group: success")
 
-    def format_group(self, id, title):
-        for i in id:
-            for j in self._groups:
-                if j.id == i:
-                    j.title = title
-        logger.info("gormat-group: success")
-        
-        self._file_manager.save_data(self._tasks, self._groups,
-                                    self._next_task_id,
-                                    self._next_group_id
-                                    )
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("delete-group: failed")
+            print(f"ERROR: {e}")
+
+    def set_status(self, ids, status):
+        try:
+            self._validator.is_task_id_exists(ids)
+
+            for i in ids:
+                for j in self._tasks:
+                    if j.id == i:
+                        j.status = status
+                        break
+            logger.info("set-status: success")
+            
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("set-status: failed")
+            print(f"ERROR: {e}")
+
+    def format_task(self, ids, title, status, group):
+        try:
+            self._validator.is_task_id_exists(ids)
+            self._validator.is_group_exists(group)
+
+            for i in ids:
+                for j in self._tasks:
+                    if j.id == i:
+                        j.title = title
+                        j.status = status
+                        j.group = group
+                        break
+            logger.info("format-task: success")
+            
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("format-task: failed")
+            print(f"ERROR: {e}")
+
+    def format_group(self, ids, title):
+        try:
+            self._validator.is_group_id_exists(ids)
+            self._validator.is_group_not_exists(title)
+
+            for i in ids:    
+                for g in self._groups:
+                    if g.id == i:
+                        for t in self._tasks:
+                            if t.group == g.title:
+                                t.group = title
+                        g.title = title
+
+            logger.info("gormat-group: success")
+            
+            self._file_manager.save_data(self._tasks, self._groups,
+                                        self._next_task_id,
+                                        self._next_group_id
+                                        )
+        except ValidationError as e:
+            logger.error("format-group: failed")
+            print(f"ERROR: {e}")
 
