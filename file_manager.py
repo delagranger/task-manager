@@ -20,7 +20,7 @@ class FileManager:
             "next_group_id": 1,
             "tasks": [],
             "groups": [{
-                "title": "ежедневные",
+                "title": "default group",
                 "id": 0
                 }]
             }
@@ -38,7 +38,7 @@ class FileManager:
                 data = json.load(f)
             return data
         except (json.JSONDecodeError, OSError, UnicodeDecodeError) as e:
-            logger.error("Load JSON: failed")
+            logger.error("Load JSON: FAILED")
             print(f"ERROR: {e}")
             sys.exit(1)
 
@@ -46,14 +46,14 @@ class FileManager:
         try:
             next_task_id = int(self.data["next_task_id"])
             next_group_id = int(self.data["next_group_id"])
-            logger.debug("Load ID`s: success")
+            logger.debug("Load ID`s: SUCCESS")
             return next_task_id, next_group_id
         except KeyError as e:
-            logger.error("Load ID`s: failed")
+            logger.error("Load ID`s: FAILED")
             print(f"ERROR: key not found: {e}")
             sys.exit(1)
         except (TypeError, ValueError) as e:
-            logger.error("Load ID`s: failed")
+            logger.error("Load ID`s: FAILED")
             print(f"ERROR: {e}")
             sys.exit(1)
     
@@ -61,18 +61,18 @@ class FileManager:
         try:
             tasks = []
             for t in self.data["tasks"]:
-                task = Task(t["title"], t["id"], t["status"],
+                task = Task(t["title"], int(t["id"]), t["status"],
                             t["group"]
                             )
                 tasks.append(task)
-            logger.debug("Load tasks: success")
+            logger.debug("Load tasks: SUCCESS")
             return tasks
         except KeyError as e:
-            logger.error("Load tasks: failed")
+            logger.error("Load tasks: FAILED")
             print(f"ERROR: key not found: {e}")
             sys.exit(1)
         except (TypeError, ValueError) as e:
-            logger.error("Load tasks: failed")
+            logger.error("Load tasks: FAILED")
             print(f"ERROR: {e}")
             sys.exit(1)
     
@@ -80,16 +80,16 @@ class FileManager:
         try:
             groups = []
             for g in self.data["groups"]:
-                group = Group(g["title"], g["id"])
+                group = Group(g["title"], int(g["id"]))
                 groups.append(group)
-            logger.debug("Load groups: success")
+            logger.debug("Load groups: SUCCESS")
             return groups
         except KeyError as e:
-            logger.error("Load groups: failed")
+            logger.error("Load groups: FAILED")
             print(f"ERROR: key not found: {e}")
             sys.exit(1)
         except (TypeError, ValueError) as e:
-            logger.error("Load groups: failed")
+            logger.error("Load groups: FAILED")
             print(f"ERROR: {e}")
             sys.exit(1)
 
@@ -117,7 +117,7 @@ class FileManager:
         try:
             with open(self._json_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
-            logger.info("Save data: success")
+            logger.info("Save data: SUCCESS")
         except OSError as e:
-            logger.error("Save data: failed")
+            logger.error("Save data: FAILED")
             print(f"ERROR: {e}")

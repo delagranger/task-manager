@@ -27,16 +27,17 @@ class CLIHandler:
     def parse_arguments(self):
         try:
             args = self._parser.parse_args()
-            logger.info("Parse args: success")
+            logger.info("Parse args: SUCCESS")
             return args
         except SystemExit:
-            logger.error("Parse args: failed")
+            logger.error("Parse args: FAILED")
             sys.exit(2)
 
     def _init_add_task(self):
         parser_add_task = self._subparsers.add_parser("add-task", help="Add task")
         parser_add_task.add_argument("-t", "--title",   
                                         nargs='?', 
+                                        default="default task",
                                         help="Task`s title"
                                         )
         parser_add_task.add_argument("-s", "--status",
@@ -47,7 +48,7 @@ class CLIHandler:
                                         )
         parser_add_task.add_argument("-g", "--group", 
                                         nargs='?', 
-                                        default="ежедневные",
+                                        default="default group",
                                         help="Objects group"
                                         )
     
@@ -55,6 +56,7 @@ class CLIHandler:
         parser_add_group = self._subparsers.add_parser("add-group", help="Add group")
         parser_add_group.add_argument("-t", "--title",
                                         nargs='?',
+                                        default="default group",
                                         help="Group`s title"
                                         )
 
@@ -106,7 +108,7 @@ class CLIHandler:
                                          )
     
     def _init_set_status(self):
-        parser_set_status = self._subparsers.add_parser("set-status", help="Delete object")
+        parser_set_status = self._subparsers.add_parser("set-status", help="Set task`s status")
         parser_set_status.add_argument("id",
                                         type=int,
                                         nargs='+', 
@@ -144,10 +146,11 @@ class CLIHandler:
         parser_format_group = self._subparsers.add_parser("format-group", help="Format group")
         parser_format_group.add_argument("id",
                                          type=int,
-                                         nargs='+',
+                                         nargs=1,
                                          help="Group`s ID"
                                          )
         parser_format_group.add_argument("-t", "--title",
                                          nargs='?',
+                                         default="default group",
                                          help="Format group`s title"
                                          )
