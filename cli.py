@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,13 @@ class CLIHandler:
         self._init_format_group()
 
     def parse_arguments(self):
-        args = self._parser.parse_args()
-        logger.info("Parse args: success")
-        return args
+        try:
+            args = self._parser.parse_args()
+            logger.info("Parse args: success")
+            return args
+        except SystemExit:
+            logger.error("Parse args: failed")
+            sys.exit(2)
 
     def _init_add_task(self):
         parser_add_task = self._subparsers.add_parser("add-task", help="Add task")
