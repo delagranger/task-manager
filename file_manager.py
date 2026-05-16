@@ -17,9 +17,12 @@ class FileManager:
         json_path = Path(__file__).parent / "data" / "data.json"
         json_format = {
             "next_task_id": 0, 
-            "next_group_id": 0,
+            "next_group_id": 1,
             "tasks": [],
-            "groups": []
+            "groups": [{
+                "title": "ежедневные",
+                "id": 0
+                }]
             }
 
         if not json_path.exists():
