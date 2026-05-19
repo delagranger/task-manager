@@ -1,23 +1,9 @@
-import os
 import logging
-from dotenv import load_dotenv
 
 from cli import CLIHandler
 from task_manager import TaskManager
 
-load_dotenv()
-log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
-log_level = getattr(logging, log_level_str, logging.INFO)
-
-logging.basicConfig(
-    level=log_level,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%d-%m-%Y %H:%M:%S",
-    handlers=[logging.StreamHandler()]
-)
-
-logger = logging.getLogger(__name__)
-logger.info(f"Logging is started, level {log_level_str}")
+log = logging.getLogger(__name__)
 
 class App:
     def __init__(self):
@@ -34,14 +20,14 @@ class App:
         match args.command:
             case "add-task":
                 self._manager.add_task(args.title, args.status, 
-                                      args.group
-                                      )
+                                       args.group,
+                )
             case "add-group":
                 self._manager.add_group(args.title)
             case "list-tasks":
                 self._manager.list_tasks(args.sort, args.status, 
-                                        args.group, args.filter
-                                        )
+                                         args.group, args.filter,
+                )
             case "list-groups":
                 self._manager.list_groups(args.sort)
             case "delete-task":
@@ -52,11 +38,11 @@ class App:
                 self._manager.set_status(args.id, args.status)
             case "format-task":
                 self._manager.format_task(args.id, args.title, 
-                                         args.status, args.group
-                                         )
+                                          args.status, args.group,
+                )
             case "format-group":
                 self._manager.format_group(args.id, args.title)
             case _:
-                logger.error("Unknown command")
+                log.error("Unknown command")
             
 

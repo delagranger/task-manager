@@ -7,10 +7,10 @@ class Task:
 
     def to_dict(self):
         task_to_dict = {"title": self.title, 
-                        "id": self.id,
-                        "status": self.status,
-                        "group": self.group
-                        }
+                        "id": self.id, 
+                        "status": self.status, 
+                        "group": self.group,
+        }
         return task_to_dict
 
 
