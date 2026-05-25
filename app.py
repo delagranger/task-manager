@@ -1,9 +1,5 @@
-import logging
-
 from cli import CLIHandler
 from task_manager import TaskManager
-
-log = logging.getLogger(__name__)
 
 class App:
     def __init__(self):
@@ -12,11 +8,8 @@ class App:
 
     def run(self):
         args = self._cli.parse_arguments()
-        # получение команды и параметров из консоли 
-        # в виде пространства имен
-        # прим. args = Namespace(command='delete', obj_link=['1', '2'])
+        # args = Namespace(command='delete', obj_link=['1', '2'])
 
-        # вызов различных функций manager
         match args.command:
             case "add-task":
                 self._manager.add_task(args.title, args.status, 
@@ -42,7 +35,5 @@ class App:
                 )
             case "format-group":
                 self._manager.format_group(args.id, args.title)
-            case _:
-                log.error("Unknown command")
             
 

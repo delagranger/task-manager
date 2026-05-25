@@ -29,8 +29,9 @@ class CLIHandler:
             args = self._parser.parse_args()
             log.info("Parse args: SUCCESS; args=%r", args)
             return args
-        except SystemExit:
+        except SystemExit as e:
             log.critical("Parse args: FAILED")
+            log.critical("ERROR: %s", e)
             sys.exit(2)
 
     def _init_add_task(self):
@@ -69,7 +70,7 @@ class CLIHandler:
                                                         help="Print all tasks",
         )
         parser_list_tasks.add_argument("--sort", 
-                                       choices=["title", "id", "status", "group", 
+                                       choices=["title", "id", "status", "group_id", 
                                                 "priority", "deadline"], 
                                        nargs='?', 
                                        default="id", 
