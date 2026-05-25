@@ -1,10 +1,11 @@
 class Group:
-    def __init__(self, title, id):
+    def __init__(self, title):
         self.title = title
-        self.id = id
+    
+    @classmethod
+    def print_group(self, group):
+        print(f"""
+                ГРУППА: {group[1]}
+                ID: {group[0]}
+        """)
 
-    def to_dict(self):
-        group_to_dict = {"title": self.title, 
-                         "id": self.id,
-        }
-        return group_to_dict
