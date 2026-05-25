@@ -1,6 +1,6 @@
 import logging
 
-from exceptions import *
+from src.exceptions import *
 
 log = logging.getLogger(__name__)
 

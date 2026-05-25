@@ -6,7 +6,7 @@ import sys
 import logging
 
 
-from db_validator import *
+from src.db_validator import *
 
 log = logging.getLogger(__name__)
 

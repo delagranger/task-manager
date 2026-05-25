@@ -1,8 +1,8 @@
 import logging
 
-from task import Task
-from group import Group
-from db_manager import DBManager
+from src.task import Task
+from src.group import Group
+from src.db_manager import DBManager
 
 log = logging.getLogger(__name__)
 

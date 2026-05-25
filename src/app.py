@@ -1,5 +1,5 @@
-from cli import CLIHandler
-from task_manager import TaskManager
+from src.cli import CLIHandler
+from src.task_manager import TaskManager
 
 class App:
     def __init__(self):
