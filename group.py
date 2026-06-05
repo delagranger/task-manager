@@ -1,10 +1,12 @@
 class Group:
-    def __init__(self, title, id):
+    def __init__(self, title):
         self.title = title
-        self.id = id
+    
+    
+    def __str__(self):
+        return "Type - Group; Title: %s;" % (self.title)
+    
 
-    def to_dict(self):
-        group_to_dict = {"title": self.title, 
-                         "id": self.id,
-        }
-        return group_to_dict
+    def __repr__(self):
+        return "Type - Group; Title=%r;" % (self.title)
+

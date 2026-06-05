@@ -1,12 +1,10 @@
 import argparse
 import logging
-import sys
 
 log = logging.getLogger(__name__)
 
-class CLIHandler:
+class CLIArgParser:
     def __init__(self):
-        # PARSER INIT
         self._parser = argparse.ArgumentParser(prog="main", 
                                                description="Build your Task-List", 
                                                add_help=True,
@@ -29,9 +27,9 @@ class CLIHandler:
             args = self._parser.parse_args()
             log.info("Parse args: SUCCESS; args=%r", args)
             return args
-        except SystemExit:
-            log.critical("Parse args: FAILED")
-            sys.exit(2)
+        except Exception as e:
+            log.error("Parse args: FAILED\nERROR: %s", e)
+            raise
 
     def _init_add_task(self):
         parser_add_task = self._subparsers.add_parser("add-task", 
@@ -54,6 +52,7 @@ class CLIHandler:
                                      help="Objects group",
         )
     
+
     def _init_add_group(self):
         parser_add_group = self._subparsers.add_parser("add-group", 
                                                        help="Add group",
@@ -64,13 +63,13 @@ class CLIHandler:
                                       help="Group`s title",
         )
 
+
     def _init_list_tasks(self):
         parser_list_tasks = self._subparsers.add_parser("list-tasks", 
                                                         help="Print all tasks",
         )
         parser_list_tasks.add_argument("--sort", 
-                                       choices=["title", "id", "status", "group", 
-                                                "priority", "deadline"], 
+                                       choices=["title", "id", "status", "group_id"], 
                                        nargs='?', 
                                        default="id", 
                                        help="Type of tasks sorting",
@@ -88,6 +87,7 @@ class CLIHandler:
                                        help="Group for filter",
         )
     
+
     def _init_list_groups(self):
         parser_list_groups = self._subparsers.add_parser("list-groups", 
                                                          help="Print all groups",
@@ -99,6 +99,7 @@ class CLIHandler:
                                         help="Type of groups sorting",
         )
     
+
     def _init_delete_task(self):
         parser_delete_task = self._subparsers.add_parser("delete-task", 
                                                          help="Delete task",
@@ -109,6 +110,7 @@ class CLIHandler:
                                         help="Task`s ID",
         )
     
+
     def _init_delete_group(self):
         parser_delete_group = self._subparsers.add_parser("delete-group", 
                                                           help="Delete Group",
@@ -119,6 +121,7 @@ class CLIHandler:
                                          help="Group`s ID",
         )
     
+
     def _init_set_status(self):
         parser_set_status = self._subparsers.add_parser("set-status", 
                                                         help="Set task`s status",
@@ -133,6 +136,7 @@ class CLIHandler:
                                        help="Task status",
         )
     
+
     def _init_format_task(self):
         parser_format_task = self._subparsers.add_parser("format-task", 
                                                          help="Format task",
@@ -158,6 +162,7 @@ class CLIHandler:
                                         help="Tasks group",
         )
     
+
     def _init_format_group(self):
         parser_format_group = self._subparsers.add_parser("format-group", 
                                                           help="Format group",
@@ -168,7 +173,6 @@ class CLIHandler:
                                          help="Group`s ID",
         )
         parser_format_group.add_argument("-t", "--title", 
-                                         nargs='?', 
-                                         default="default group", 
+                                         nargs='?',  
                                          help="Format group`s title"
         )

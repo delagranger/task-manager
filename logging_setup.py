@@ -2,11 +2,15 @@ import os
 import logging
 from dotenv import load_dotenv
 
-def log_setup():
+LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
+def log_setup():
     load_dotenv()
     log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
-    log_level = getattr(logging, log_level_str, logging.INFO)
+    if log_level_str not in LOG_LEVELS:
+        print(f"WARNING: Incorrect log level '{log_level_str}, using level INFO'")
+        log_level_str = "INFO"
+    log_level = getattr(logging, log_level_str)
 
     logging.basicConfig(
         level=log_level,
@@ -16,4 +20,4 @@ def log_setup():
     )
 
     log = logging.getLogger(__name__)
-    log.info(f"Logging is started, level {log_level_str}")
+    log.info(f"Logging is started with level {log_level_str}")

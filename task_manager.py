@@ -1,217 +1,154 @@
-from operator import attrgetter
 import logging
 
 from task import Task
 from group import Group
-from file_manager import FileManager
-from validators import Validator, ValidationError
+from db_manager import DBManager
+from exceptions import (FilterNotExists, SortTypeNotFound, 
+                        IncorrectLength, StatusNotFound)
 
 log = logging.getLogger(__name__)
 
+MAX_GROUP_LENGTH = 25
+MAX_TASK_LENGTH = 50
+STATUSES = ['active', 'frozen', 'finished']
+GROUPS_SORT_TYPES = ['id', 'title']
+TASKS_SORT_TYPES = ['id', 'title', 'status', 'group_id']
+
 class TaskManager:
     def __init__(self):
-        self._file_manager = FileManager()
-        self._validator = Validator(self)
-        self._next_task_id, self._next_group_id = self._file_manager.load_ids()
-        self._tasks = self._file_manager.load_tasks()
-        self._groups = self._file_manager.load_groups()
+        self._db_manager = DBManager()
+ 
 
-    def add_task(self, title, status, group):
-        try:
-            self._validator.verify_group_exists(group, expected_exist=True)
-            
-            task = Task(title, 
-                        self._next_task_id,
-                        status, group,
-            )
-            self._next_task_id += 1
-            self._tasks.append(task)
-            log.info("add-task: SUCCESS; id=%s, title=%s, status=%s, group=%s",
-                     task.id, title, status, group
-            )
+    def add_task(self, title, status, group):  
+        title, cur_length = self._ensure_title_is_correct("task", title)
+        status = self._ensure_status_is_correct(status)    
+        task = Task(title, status, group)
+        id, title, status, group_id, group_title = self._db_manager.add_task(task)
+        return id, title, status, group_id, group_title
 
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("add-task: FAILED")
-            log.error("ERROR: %s", e)
 
     def add_group(self, title):
-        try:
-            self._validator.verify_group_exists(title, expected_exist=False)
+        title, cur_length = self._ensure_title_is_correct("group", title)
+        group = Group(title)
+        id, title = self._db_manager.add_group(group)
+        return id, title
 
-            group = Group(title, self._next_group_id)
-            self._next_group_id += 1
-            self._groups.append(group)
-            log.info("add-group: SUCCESS; id=%s, title=%s", group.id, title)
 
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("add-group: FAILED")
-            log.error("ERROR: %s", e)
+    def list_tasks(self, sort_type, filtered, status, group):
+        sort_type = self._ensure_sort_type_is_correct("task", sort_type)
+        self._ensure_filter_exists(filtered, status, group)
+        tasks = self._db_manager.list_tasks(sort_type, filtered, status, group)
+        return tasks
 
-    def list_tasks(self, sort_type, status, group, filtered=False):
-        filtered_tasks = self._tasks
-        try:
-            if filtered:
-                if status:
-                    self._validator.verify_status_exists(status)
-                    filtered_tasks = list(filter(lambda t: t.status == status, 
-                                                 filtered_tasks
-                    ))
-                if group:
-                    self._validator.verify_group_exists(group, expected_exist=True)
-                    filtered_tasks = list(filter(lambda t: t.group == group, 
-                                                 filtered_tasks
-                    ))
-
-                print("filtered tasks -->")
-                for i in filtered_tasks:
-                    print(f"""
-                        ЗАДАЧА: {i.title}
-                        ID: {i.id}
-                        СТАТУС: {i.status}
-                        ГРУППА: {i.group}
-                        """)
-                print("--------------")
-                log.info("filter-tasks: SUCCESS; filtered by status=%s and group=%s", status, group)
-        except ValidationError as e:
-            log.error("list-task --filter: FAILED")
-            log.error("ERROR: %s", e)
-
-        key = attrgetter(sort_type)
-        sorted_tasks = sorted(filtered_tasks, key=key, reverse=False)
-        
-        print("sorted tasks -->")
-        for i in sorted_tasks:
-            print(f"""
-                        ЗАДАЧА: {i.title}
-                        ID: {i.id}
-                        СТАТУС: {i.status}
-                        ГРУППА: {i.group}
-                    """)
-        print("--------------")
-        log.info("list-tasks: SUCCESS; sort type=%s", sort_type)
-
+   
     def list_groups(self, sort_type):
-        key = attrgetter(sort_type)
-        sorted_groups = sorted(self._groups, key=key, reverse=False)
+        sort_type = self._ensure_sort_type_is_correct("group", sort_type)
+        groups = self._db_manager.list_groups(sort_type)
+        return groups
 
-        print("sorted groups -->")
-        for i in sorted_groups:
-            print(f"""
-                        ГРУППА: {i.title}
-                        ID: {i.id}
-                    """)
-        print("--------------")
-        log.info("list-groups: SUCCESS; sort type=%s", sort_type)
-
+   
     def delete_task(self, ids):
-        try:
-            self._validator.verify_task_id_exists(ids)
+        ids = self._db_manager.delete_task(ids)
+        return ids
 
-            for i in ids:
-                for j in self._tasks:
-                    if j.id == i:
-                        self._tasks.remove(j)
-                        break
-            log.info("delete-task: SUCCESS; id=%s", ids)
-
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("delete-task: FAILED")
-            log.error("ERROR: %s", e)
 
     def delete_group(self, ids):
-        try:
-            self._validator.verify_group_id_exists(ids)
+        ids = self._db_manager.delete_group(ids)
+        return ids
 
-            for i in ids:
-                for j in self._groups:
-                    if j.id == i:
-                        self._groups.remove(j)
-                        break
-            log.info("delete-group: SUCCESS; id=%s", ids)
-
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("delete-group: FAILED")
-            log.error("ERROR: %s", e)
-
+  
     def set_status(self, ids, status):
-        try:
-            self._validator.verify_task_id_exists(ids)
+        status = self._ensure_status_is_correct(status)
+        ids, status = self._db_manager.set_status(ids, status)
+        return ids, status
 
-            for i in ids:
-                for j in self._tasks:
-                    if j.id == i:
-                        j.status = status
-                        break
-            log.info("set-status: SUCCESS; id=%s, new status=%s", ids, status)
-            
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("set-status: FAILED")
-            log.error("ERROR: %s", e)
 
     def format_task(self, ids, title, status, group):
-        try:
-            self._validator.verify_task_id_exists(ids)
-            self._validator.verify_group_exists(group, expected_exist=True)
-
-            for i in ids:
-                for j in self._tasks:
-                    if j.id == i:
-                        j.title = title
-                        j.status = status
-                        j.group = group
-                        break
-            log.info("format-task: SUCCESS; id=%s, new title=%s, new status=%s, new group=%s", 
-                     ids, title, status, group
-            )
-            
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
-            )
-        except ValidationError as e:
-            log.error("format-task: FAILED")
-            log.error("ERROR: %s", e)
+        title, cur_length = self._ensure_title_is_correct("task", title)
+        ids, title, status, group = self._db_manager.format_task(
+            ids, title, status, group
+        )
+        return ids, title, status, group
+    
 
     def format_group(self, id, title):
-        try:
-            self._validator.verify_group_id_exists(id)
-            self._validator.verify_group_exists(title, expected_exist=False)
+        title, cur_length = self._ensure_title_is_correct("group", title)
+        id, title = self._db_manager.format_group(id, title)
+        return id, title
 
-            for i in id:    
-                for g in self._groups:
-                    if g.id == i:
-                        for t in self._tasks:
-                            if t.group == g.title:
-                                t.group = title
-                        g.title = title
 
-            log.info("format-group: SUCCESS; id=%s, new title=%s", id, title)
-            
-            self._file_manager.save_data(self._tasks, self._groups, 
-                                         self._next_task_id, 
-                                         self._next_group_id,
+    def _ensure_sort_type_is_correct(self, obj_type, sort_type):
+        if obj_type == "task" and sort_type not in TASKS_SORT_TYPES:
+            sort_types = TASKS_SORT_TYPES
+            log.error("Ensure sort type is correct: FAILED; Sort type=%r", 
+                      sort_type,
             )
-        except ValidationError as e:
-            log.error("format-group: FAILED")
-            log.error("ERROR: %s", e)
+            raise SortTypeNotFound(sort_type, sort_types)
+        elif obj_type == "group" and sort_type not in GROUPS_SORT_TYPES:
+            sort_types = GROUPS_SORT_TYPES
+            log.error("Ensure sort type is correct: FAILED; Sort type=%r", 
+                      sort_type,
+            )
+            raise SortTypeNotFound(sort_type, sort_types)
+        else:
+            log.debug("Ensure sort type is correct: SUCCESS; Sort type=%r", 
+                      sort_type,
+            )
+            return sort_type
+    
 
+    def _ensure_filter_exists(self, filtered, status, group):
+        if filtered and (status or group):
+            log.debug("Ensure filter exists: SUCCESS; Filter=%r, Status=%r, Group=%r", 
+                      filtered, status, group,
+            )
+            return status, group
+        elif filtered and not status and not group:
+            log.error("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
+                      filtered, status, group,
+            )
+            raise FilterNotExists()
+        elif not filtered and (status or group):
+            log.error("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
+                      filtered, status, group,
+            )
+            raise FilterNotExists()
+        else:
+            log.warning("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
+                        filtered, status, group,
+            )
+
+
+    def _ensure_title_is_correct(self, obj_type, title):
+        cur_length = len(title)
+        if obj_type == "group" and len(title) > MAX_GROUP_LENGTH:
+            max_length = MAX_GROUP_LENGTH
+            log.error("Ensure group title is correct: FAILED; Title=%r, length=%r", 
+                      title, cur_length,
+            )
+            raise IncorrectLength(obj_type, cur_length, max_length)
+        elif obj_type == "task" and len(title) > MAX_TASK_LENGTH:
+            max_length = MAX_TASK_LENGTH
+            log.error("Ensure task title is correct: FAILED; Title=%r, length=%r", 
+                      title, cur_length,
+            )
+            raise IncorrectLength(obj_type, cur_length, max_length)
+        else:
+            log.debug("Ensure title is correct: SUCCESS; Title=%r, length=%r", 
+                      title, cur_length,
+            )
+            return title, cur_length
+
+
+    def _ensure_status_is_correct(self, status):
+        if status not in STATUSES:
+            statuses = STATUSES
+            log.error("Ensure status is correct: FAILED; Status=%r", 
+                      status,
+            )
+            raise StatusNotFound(status, statuses)
+        else:
+            log.debug("Ensure status is correct: SUCCESS; Status=%r", 
+                      status,
+            )
+            return status
