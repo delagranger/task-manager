@@ -23,3 +23,15 @@ def log_setup():
     log = logging.getLogger(__name__)
     log.info(f"Logging is started with level {log_level_str}")
 
+
+def create_orm_engine():
+    load_dotenv()
+    user=os.getenv("DB_USER")
+    password=os.getenv("DB_PASSWORD")
+    host=os.getenv("DB_HOST")
+    port=os.getenv("DB_PORT")
+    dbname=os.getenv("DB_NAME")
+
+    engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}")
+
+    return engine
