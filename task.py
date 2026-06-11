@@ -5,11 +5,7 @@ class Task:
         self.group = group
 
 
-    def __str__(self):
-        return "Type - Task; Title: %s; Status: %s; Group: %s" % (self.title, self.status, self.group)
-
-
     def __repr__(self):
-        return "Type - Task; Title=%r; Status=%r; Group=%r" % (self.title, self.status, self.group)
+        return f"Task(Title={self.title}, status={self.status}, group={self.group})"
 
 
