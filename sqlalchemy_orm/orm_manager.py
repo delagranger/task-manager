@@ -80,6 +80,24 @@ class ORMManager:
             log.error("Delete task: FAILED; IDs=%r\nERROR: %s", ids, e)
             session.rollback()
             raise
+    
+
+    def delete_group(self, ids):
+        try:
+            with self._Session() as session:
+                query = session.query(GroupORM)
+                ids = self._ensure_group_id_exists(query, ids)
+                for id in ids:
+                    group = query.filter(GroupORM.id == id).first()
+                    session.delete(group)
+                    session.commit()
+                log.info("Delete group: SUCCESS; IDs=%r", ids)
+                return ids
+        except (GIDNotFound, SQLAlchemyError) as e:
+            log.error("Delete group: FAILED; IDs=%r\nERROR: %s", ids, e)
+            session.rollback()
+            raise
+
 
     def _ensure_group_title_exists(self, session, title):
         query = session.query(GroupORM)
@@ -99,4 +117,14 @@ class ORMManager:
             raise TIDNotFound(ids)
         else:
             log.debug("Ensure TaskID exists: SUCCESS; IDs=%r", ids)
+            return ids
+    
+
+    def _ensure_group_id_exists(self, query, ids):
+        found_ids = query.filter(GroupORM.id.in_(ids)).all()
+        if len(found_ids) < len(ids):
+            log.error("Ensure GroupID exists: FAILED; IDs=%r", ids)
+            raise GIDNotFound(ids)
+        else:
+            log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
             return ids

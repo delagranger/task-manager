@@ -207,7 +207,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def delete_group(self, ids):
         try:
             with self._conn.cursor() as cur:
@@ -304,7 +304,7 @@ class DBManager:
                 )
                 raise GroupNotFound(title)
 
-
+    # DONE
     def _ensure_group_id_exists(self, changed_rows, ids):
         if changed_rows < len(ids):
             log.error("Ensure GroupID exists: FAILED; IDs=%r", ids)

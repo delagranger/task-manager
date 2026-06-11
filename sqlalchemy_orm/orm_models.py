@@ -14,7 +14,7 @@ class GroupORM(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(25), unique=True, nullable=False)
-    tasks: Mapped[list["TaskORM"]] = relationship(back_populates="group")
+    tasks: Mapped[list["TaskORM"]] = relationship(back_populates="group", passive_deletes=True)
 
     def __repr__(self):
         return f"Group(ID={self.id}, title={self.title})"
@@ -26,7 +26,7 @@ class TaskORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[str] = mapped_column(String(), nullable=False)
-    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id", ondelete="SET NULL"))
+    group_id: Mapped[int | None] = mapped_column(ForeignKey("groups.id", ondelete="SET NULL"), nullable=True)
     group: Mapped["GroupORM"] = relationship(back_populates="tasks")
     
     def __repr__(self):
