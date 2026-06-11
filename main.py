@@ -1,4 +1,4 @@
-from logging_setup import log_setup
+from config import log_setup
 log_setup()
 
 from app import App
