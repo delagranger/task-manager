@@ -1,5 +1,6 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import joinedload
 import logging
 
 from config import create_orm_engine
@@ -61,6 +62,34 @@ class ORMManager:
                 return group_orm.id, group_orm.title
         except SQLAlchemyError as e:
             log.error("Add group: FAILED; Title=%r\nERROR: %s", group.title, e)
+            session.rollback()
+            raise
+
+
+    def list_tasks(self, sort_type, filtered, status, group):
+        try:
+            sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
+            with self._Session() as session:
+                query = session.query(TaskORM)
+                if filtered:
+                    if status:
+                        status = self._ensure_status_exists(query, status)
+                        query = query.filter(TaskORM.status == status)
+                    if group:
+                        group = self._ensure_group_title_exists(session, group)
+                        query = query.filter(TaskORM.group_id == group.id)
+                query = query.order_by(sorting_map[sort_type])
+                query = query.options(joinedload(TaskORM.group))
+                log.debug("Collect, sort and filter tasks: SUCCESS; " \
+                            "Sort type=%r, filter=%r, status=%r, group=%r", 
+                            sort_type, filtered, status, group,
+                    )
+                return query.all()
+        except (StatusNotFound, GroupNotFound, SQLAlchemyError) as e:
+            log.error("Collect, sort and filter tasks: FAILED; " \
+                      "Sort type=%r, filter=%r, status=%r, group=%r\nERROR: %s", 
+                      sort_type, filtered, status, group, e,
+            )
             session.rollback()
             raise
 
@@ -128,3 +157,14 @@ class ORMManager:
         else:
             log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
             return ids
+    
+
+    def _ensure_status_exists(self, query, status):
+        exists = query.filter(TaskORM.status == status).first()
+        if exists:
+            log.debug("Ensure status exists: SUCCESS; Status=%r", status)
+            return status
+        else:
+            log.error("Ensure status exists: FAILED; Status=%r", status)
+            raise StatusNotFound(status)
+    

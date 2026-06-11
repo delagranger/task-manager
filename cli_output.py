@@ -10,7 +10,7 @@ class CLIOutput:
         try:
             print("Displayed tasks -->")
             for t in tasks:
-                print(f"ID: {t[0]}; Title: {t[1]}; Status: {t[2]}; Group: {t[3]}")
+                print(f"ID: {t.id}; Title: {t.title}; Status: {t.status}; Group: {t.group}")
             print('-' * 19)
             log.debug("Display tasks: SUCCESS")
         except Exception as e:

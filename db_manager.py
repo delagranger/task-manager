@@ -129,7 +129,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def list_tasks(self, sort_type, filtered, status, group):
         try:
             query = "SELECT tasks.id, tasks.title, tasks.status, " \
@@ -322,7 +322,7 @@ class DBManager:
             log.debug("Ensure TaskID exists: SUCCESS; IDs=%r", ids)
             return ids
 
-
+    # DONE
     def _ensure_status_exists(self, status):
         with self._conn.cursor() as cur:
             query = "SELECT * FROM tasks WHERE status = %s;"
