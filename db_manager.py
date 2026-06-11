@@ -172,7 +172,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def list_groups(self, sort_type):
         try:
             with self._conn.cursor() as cur:

@@ -94,6 +94,22 @@ class ORMManager:
             raise
 
 
+    def list_groups(self, sort_type):
+        try:
+            sorting_map = {'id' : GroupORM.id, 'title' : GroupORM.title}
+            with self._Session() as session:
+                query = session.query(GroupORM)
+                query = query.order_by(sorting_map[sort_type])
+                log.debug("Collect and sort groups: SUCCESS; Sort type = %r", 
+                          sort_type,
+                )
+                return query.all() 
+        except SQLAlchemyError as e:
+            log.error("Collect and sort groups: FAILED; Sort type=%r\nERROR: %s", sort_type, e)
+            session.rollback()
+            raise
+
+
     def delete_task(self, ids):
         try:
             with self._Session() as session:

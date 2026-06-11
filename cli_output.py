@@ -22,7 +22,7 @@ class CLIOutput:
         try:
             print("Displayed groups -->")
             for g in groups:
-                print(f"ID: {g[0]}; Title: {g[1]};")
+                print(f"ID: {g.id}; Title: {g.title};")
             print('-' * 20)
             log.debug("Display groups: SUCCESS")
         except Exception as e:
