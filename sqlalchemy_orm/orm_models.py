@@ -9,25 +9,25 @@ class Base(DeclarativeBase):
     pass
 
 
-class Group(Base):
+class GroupORM(Base):
     __tablename__ = "groups"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(25), unique=True, nullable=False)
-    tasks: Mapped[list["Task"]] = relationship(back_populates="group")
+    tasks: Mapped[list["TaskORM"]] = relationship(back_populates="group")
 
     def __repr__(self):
         return f"Group(ID={self.id}, title={self.title})"
 
 
-class Task(Base):
+class TaskORM(Base):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[str] = mapped_column(String(), nullable=False)
-    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"))
-    group: Mapped["Group"] = relationship(back_populates="tasks")
+    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id", ondelete="SET NULL"))
+    group: Mapped["GroupORM"] = relationship(back_populates="tasks")
     
     def __repr__(self):
         return f"Task(ID={self.id}, title={self.title}, status={self.status}, group={self.group})"

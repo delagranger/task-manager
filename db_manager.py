@@ -16,7 +16,7 @@ class DBManager:
         self._insert_default_group()
         self._create_tasks_table()
 
-
+    # DONE
     def _create_connection(self):
         try:
             connection = psycopg2.connect(dbname=os.getenv("DB_NAME"), 
@@ -31,7 +31,7 @@ class DBManager:
             log.error("Create SQL connection: FAILED\nERROR: %s", e)
             raise
 
-
+    # DONE
     def _create_groups_table(self):
         try:
             with self._conn.cursor() as cur:
@@ -45,7 +45,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def _insert_default_group(self):
         try:
             with self._conn.cursor() as cur:
@@ -65,7 +65,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def _create_tasks_table(self):
         try:
             with self._conn.cursor() as cur:
@@ -84,7 +84,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def add_task(self, task):
         try:
             group_id, group_title = self._ensure_group_title_exists(task.group)
@@ -107,7 +107,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def add_group(self, group):
         try:
             with self._conn.cursor() as cur:

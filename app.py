@@ -24,8 +24,8 @@ class App:
             args = self._argparser.parse_arguments()
             match args.command:
                 case "add-task":
-                    id, title, status, group_id, group_title = self._tm.add_task(args.title, args.status, args.group)
-                    self._output.display_task_created(id, title, status, group_title)
+                    id, title, status, group = self._tm.add_task(args.title, args.status, args.group)
+                    self._output.display_task_created(id, title, status, group)
                 case "add-group":
                     id, title = self._tm.add_group(args.title)
                     self._output.display_group_created(id, title)

@@ -3,6 +3,7 @@ import logging
 from task import Task
 from group import Group
 from db_manager import DBManager
+from sqlalchemy_orm.orm_manager import ORMManager
 from exceptions import (FilterNotExists, SortTypeNotFound, 
                         IncorrectLength, StatusNotFound)
 
@@ -16,56 +17,56 @@ TASKS_SORT_TYPES = ['id', 'title', 'status', 'group_id']
 
 class TaskManager:
     def __init__(self):
-        self._db_manager = DBManager()
+        self._orm_manager = ORMManager()
  
 
     def add_task(self, title, status, group):  
         title, cur_length = self._ensure_title_is_correct("task", title)
         status = self._ensure_status_is_correct(status)    
         task = Task(title, status, group)
-        id, title, status, group_id, group_title = self._db_manager.add_task(task)
-        return id, title, status, group_id, group_title
+        id, title, status, group = self._orm_manager.add_task(task)
+        return id, title, status, group
 
 
     def add_group(self, title):
         title, cur_length = self._ensure_title_is_correct("group", title)
         group = Group(title)
-        id, title = self._db_manager.add_group(group)
+        id, title = self._orm_manager.add_group(group)
         return id, title
 
 
     def list_tasks(self, sort_type, filtered, status, group):
         sort_type = self._ensure_sort_type_is_correct("task", sort_type)
         self._ensure_filter_exists(filtered, status, group)
-        tasks = self._db_manager.list_tasks(sort_type, filtered, status, group)
+        tasks = self._orm_manager.list_tasks(sort_type, filtered, status, group)
         return tasks
 
    
     def list_groups(self, sort_type):
         sort_type = self._ensure_sort_type_is_correct("group", sort_type)
-        groups = self._db_manager.list_groups(sort_type)
+        groups = self._orm_manager.list_groups(sort_type)
         return groups
 
    
     def delete_task(self, ids):
-        ids = self._db_manager.delete_task(ids)
+        ids = self._orm_manager.delete_task(ids)
         return ids
 
 
     def delete_group(self, ids):
-        ids = self._db_manager.delete_group(ids)
+        ids = self._orm_manager.delete_group(ids)
         return ids
 
   
     def set_status(self, ids, status):
         status = self._ensure_status_is_correct(status)
-        ids, status = self._db_manager.set_status(ids, status)
+        ids, status = self._orm_manager.set_status(ids, status)
         return ids, status
 
 
     def format_task(self, ids, title, status, group):
         title, cur_length = self._ensure_title_is_correct("task", title)
-        ids, title, status, group = self._db_manager.format_task(
+        ids, title, status, group = self._orm_manager.format_task(
             ids, title, status, group
         )
         return ids, title, status, group
@@ -73,7 +74,7 @@ class TaskManager:
 
     def format_group(self, id, title):
         title, cur_length = self._ensure_title_is_correct("group", title)
-        id, title = self._db_manager.format_group(id, title)
+        id, title = self._orm_manager.format_group(id, title)
         return id, title
 
 
