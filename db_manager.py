@@ -266,7 +266,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-    
+
     def format_group(self, ids, title):
         try:
             with self._conn.cursor() as cur:
@@ -312,7 +312,7 @@ class DBManager:
         else:
             log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
             return ids
-        
+
 
     def _ensure_task_id_exists(self, changed_rows, ids):
         if changed_rows < len(ids):
@@ -337,27 +337,3 @@ class DBManager:
                           status
                 )
                 return status
-    
-    # FRESH
-    # def _ensure_enum_exists(self, enum_name, enum):
-    #     with self.conn.cursor() as cur:
-    #         query = "SELECT 1 FROM pg_type WHERE typname = '%s'" % (enum_name)
-    #         cur.execute(query)
-    #         if not cur.fetchone():
-    #             self._create_enum(enum_name, enum)
-
-    # FRESH
-    # def _create_enum(self, enum_name, enum):
-    #     try:
-    #         with self.conn.cursor() as cur:
-    #             query = "CREATE TYPE %s AS ENUM %s;" % (enum_name, enum)
-    #             cur.execute(query)
-    #             self.conn.commit()
-    #             log.debug("Create ENUM: SUCCESS; EnumName=%r, ENUM=%r", 
-    #                       enum_name, enum,
-    #             )
-    #     except psycopg2.Error:
-    #         log.error("Create ENUM: FAILED; EnumName=%r, ENUM=%r", 
-    #                   enum_name, enum,
-    #         )
-    #         raise
