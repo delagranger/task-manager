@@ -190,7 +190,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def delete_task(self, ids):
         try:
             with self._conn.cursor() as cur:
@@ -286,7 +286,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def _ensure_group_title_exists(self, title):
         with self._conn.cursor() as cur:
             query = "SELECT id FROM groups WHERE title = %s;"
@@ -313,7 +313,7 @@ class DBManager:
             log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
             return ids
 
-
+    # DONE
     def _ensure_task_id_exists(self, changed_rows, ids):
         if changed_rows < len(ids):
             log.error("Ensure TaskID exists: FAILED; IDs=%r", ids)

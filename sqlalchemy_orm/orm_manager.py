@@ -65,6 +65,22 @@ class ORMManager:
             raise
 
 
+    def delete_task(self, ids):
+        try:
+            with self._Session() as session:
+                query = session.query(TaskORM)
+                ids = self._ensure_task_id_exists(query, ids)
+                for id in ids:
+                    task = query.filter(TaskORM.id == id).first()
+                    session.delete(task)
+                    session.commit()
+                log.info("Delete task: SUCCESS; IDs=%r", ids)
+                return ids
+        except (TIDNotFound, SQLAlchemyError) as e:
+            log.error("Delete task: FAILED; IDs=%r\nERROR: %s", ids, e)
+            session.rollback()
+            raise
+
     def _ensure_group_title_exists(self, session, title):
         query = session.query(GroupORM)
         group = query.filter(GroupORM.title == title).first()
@@ -74,3 +90,13 @@ class ORMManager:
         else:
             log.error("Ensure groups title exists: FAILED; GroupTitle=%r", title)
             raise GroupNotFound(title)
+    
+
+    def _ensure_task_id_exists(self, query, ids):
+        found_ids = query.filter(TaskORM.id.in_(ids)).all()
+        if len(found_ids) < len(ids):
+            log.error("Ensure TaskID exists: FAILED; IDs=%r", ids)
+            raise TIDNotFound(ids)
+        else:
+            log.debug("Ensure TaskID exists: SUCCESS; IDs=%r", ids)
+            return ids
