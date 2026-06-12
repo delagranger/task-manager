@@ -100,6 +100,7 @@ class ORMManager:
             with self._Session() as session:
                 query = session.query(GroupORM)
                 query = query.order_by(sorting_map[sort_type])
+                query = query.options(joinedload(GroupORM.tasks))
                 log.debug("Collect and sort groups: SUCCESS; Sort type = %r", 
                           sort_type,
                 )

@@ -41,7 +41,7 @@ class TaskManager:
         tasks = self._orm_manager.list_tasks(sort_type, filtered, status, group)
         return tasks
 
-   
+
     def list_groups(self, sort_type):
         sort_type = self._ensure_sort_type_is_correct("group", sort_type)
         groups = self._orm_manager.list_groups(sort_type)

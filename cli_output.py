@@ -21,9 +21,12 @@ class CLIOutput:
     def display_groups(self, groups):
         try:
             print("Displayed groups -->")
-            for g in groups:
-                print(f"ID: {g.id}; Title: {g.title};")
             print('-' * 20)
+            for g in groups:
+                print(f"Group\nTitle: {g.title}; ID: {g.id};")
+                for t in g.tasks:
+                    print(f"Task: {t.title}")
+                print('-' * 20)
             log.debug("Display groups: SUCCESS")
         except Exception as e:
             log.error("Display groups: FAILED\nERROR: %s", e)
