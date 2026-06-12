@@ -2,7 +2,6 @@ import logging
 
 from task import Task
 from group import Group
-from db_manager import DBManager
 from sqlalchemy_orm.orm_manager import ORMManager
 from exceptions import (FilterNotExists, SortTypeNotFound, 
                         IncorrectLength, StatusNotFound)
