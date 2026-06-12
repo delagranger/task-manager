@@ -162,6 +162,26 @@ class ORMManager:
             raise
 
 
+    def format_task(self, ids, title, status, group):
+        try:
+            with self._Session() as session:
+                query = session.query(TaskORM)
+                group = self._ensure_group_title_exists(session, group)
+                ids = self._ensure_task_id_exists(query, ids)
+                tasks = query.filter(TaskORM.id.in_(ids)).all()
+                for t in tasks:
+                    t.title = title
+                    t.status = status
+                    t.group = group
+                    session.commit()
+                log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", ids, title, status, group)
+                return ids, title, status, group
+        except (GroupNotFound, TIDNotFound, SQLAlchemyError) as e:
+            log.error("Format task: FAILED; ID=%r, Title=%r, Status=%r, Group=%r\nERROR: %s", ids, title, status, group, e)
+            session.rollback()
+            raise
+
+
     def format_group(self, id, title):
         try:
             with self._Session() as session:

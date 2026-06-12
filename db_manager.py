@@ -244,7 +244,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-    
+    # DONE
     def format_task(self, ids, title, status, group):
         try:
             group_id = self._ensure_group_title_exists(group)
