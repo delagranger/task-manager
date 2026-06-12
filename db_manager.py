@@ -266,7 +266,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def format_group(self, ids, title):
         try:
             with self._conn.cursor() as cur:

@@ -162,6 +162,22 @@ class ORMManager:
             raise
 
 
+    def format_group(self, id, title):
+        try:
+            with self._Session() as session:
+                query = session.query(GroupORM)
+                id = self._ensure_group_id_exists(query, id)
+                group = query.filter(GroupORM.id.in_(id)).first()
+                group.title = title
+                session.commit()
+                log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
+                return id, title
+        except (GIDNotFound, SQLAlchemyError) as e:
+            log.error("Format group: FAILED; ID=%r, Title=%r\nERROR: %s", id, title, e)
+            session.rollback()
+            raise
+
+
     def _ensure_group_title_exists(self, session, title):
         query = session.query(GroupORM)
         group = query.filter(GroupORM.title == title).first()
