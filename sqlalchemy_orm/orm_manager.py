@@ -145,6 +145,23 @@ class ORMManager:
             raise
 
 
+    def set_status(self, ids, status):
+        try:
+            with self._Session() as session:
+                query = session.query(TaskORM)
+                ids = self._ensure_task_id_exists(query, ids)
+                tasks = query.filter(TaskORM.id.in_(ids)).all()
+                for t in tasks:
+                    t.status = status
+                    session.commit()
+                log.info("Set status: SUCCESS; IDs=%r, New status=%r", ids, status)
+                return ids, status
+        except (TIDNotFound, SQLAlchemyError) as e:
+            log.error("Set status: FAILED; IDs=%r, Status=%r\nERROR: %s", ids, status, e)
+            session.rollback()
+            raise
+
+
     def _ensure_group_title_exists(self, session, title):
         query = session.query(GroupORM)
         group = query.filter(GroupORM.title == title).first()

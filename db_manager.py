@@ -224,7 +224,7 @@ class DBManager:
             self._conn.rollback()
             raise
 
-
+    # DONE
     def set_status(self, ids, status):
         try:
             with self._conn.cursor() as cur:
