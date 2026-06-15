@@ -23,14 +23,14 @@ class ORMManager:
 
     def _create_default_group(self):
         try:
-            session = self._Session()
-            query = session.query(GroupORM)
-            result = query.filter(GroupORM.title == "default group").first()
-            if not result:
-                group_orm = GroupORM(title="default group")
-                session.add(group_orm)
-                session.commit()
-                log.debug("Insert default group: SUCCESS; %r", group_orm)
+            with self._Session() as session:
+                query = session.query(GroupORM)
+                result = query.filter(GroupORM.title == "default group").first()
+                if not result:
+                    group_orm = GroupORM(title="default group")
+                    session.add(group_orm)
+                    session.commit()
+                    log.debug("Insert default group: SUCCESS; %r", group_orm)
         except SQLAlchemyError as e:
             session.rollback()
             log.error("Create default group: FAILED\nERROR: %s", e)
@@ -207,7 +207,7 @@ class ORMManager:
         else:
             log.error("Ensure groups title exists: FAILED; GroupTitle=%r", title)
             raise GroupNotFound(title)
-    
+
 
     def _ensure_task_id_exists(self, query, ids):
         found_ids = query.filter(TaskORM.id.in_(ids)).all()
@@ -227,7 +227,7 @@ class ORMManager:
         else:
             log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
             return ids
-    
+
 
     def _ensure_status_exists(self, query, status):
         exists = query.filter(TaskORM.status == status).first()
