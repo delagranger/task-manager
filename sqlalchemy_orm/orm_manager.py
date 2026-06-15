@@ -16,7 +16,7 @@ class ORMManager:
             Base.metadata.create_all(self._engine)
             self._Session = sessionmaker(bind=self._engine)
         except SQLAlchemyError as e:
-            log.error
+            log.error("Init SQLAlchemy ORM: Failed\nERROR: %s", e)
         else:
             self._create_default_group()
 
