@@ -2,7 +2,7 @@ import logging
 
 from task import Task
 from group import Group
-from sqlalchemy_orm.orm_manager import ORMManager
+from repository.orm_manager import ORMManager
 from exceptions import (FilterNotExists, SortTypeNotFound, 
                         IncorrectLength, StatusNotFound)
 
@@ -56,7 +56,7 @@ class TaskManager:
         ids = self._orm_manager.delete_group(ids)
         return ids
 
-  
+
     def set_status(self, ids, status):
         status = self._ensure_status_is_correct(status)
         ids, status = self._orm_manager.set_status(ids, status)

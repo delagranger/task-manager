@@ -4,8 +4,10 @@ from sqlalchemy.orm import joinedload
 import logging
 
 from config import create_orm_engine
-from sqlalchemy_orm.orm_models import Base, GroupORM, TaskORM
+from repository.models.group_model import GroupORM
+from repository.models.task_model import TaskORM
 from exceptions import (StatusNotFound, GIDNotFound, TIDNotFound, GroupNotFound)
+from repository.models.base import Base
 
 log = logging.getLogger(__name__)
 
@@ -126,7 +128,7 @@ class ORMManager:
             log.error("Delete task: FAILED; IDs=%r\nERROR: %s", ids, e)
             session.rollback()
             raise
-    
+
 
     def delete_group(self, ids):
         try:
@@ -217,7 +219,7 @@ class ORMManager:
         else:
             log.debug("Ensure TaskID exists: SUCCESS; IDs=%r", ids)
             return ids
-    
+
 
     def _ensure_group_id_exists(self, query, ids):
         found_ids = query.filter(GroupORM.id.in_(ids)).all()
