@@ -9,6 +9,8 @@ from repository.models.task_model import TaskORM
 from exceptions import (StatusNotFound, GIDNotFound, TIDNotFound, GroupNotFound)
 from repository.models.base import Base
 from context_manager import orm_context_manager as context
+from group import Group
+from task import Task
 
 log = logging.getLogger(__name__)
 
@@ -65,7 +67,7 @@ class ORMManager:
             log.error("Add group: FAILED; Title=%r\nERROR: %s", group.title, e)
             raise
 
-    # FRESH
+
     def list_tasks(self, sort_type, filtered, status, group):
         try:
             sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
@@ -80,11 +82,17 @@ class ORMManager:
                         query = query.filter(TaskORM.group_id == group.id)
                 query = query.order_by(sorting_map[sort_type])
                 query = query.options(joinedload(TaskORM.group))
+                rows = query.all()
                 log.debug("Collect, sort and filter tasks: SUCCESS; " \
                             "Sort type=%r, filter=%r, status=%r, group=%r", 
                             sort_type, filtered, status, group,
                     )
-                return query.all()
+                
+                tasks = []
+                for t in rows:
+                    task = Task(t.title, t.status, t.id, t.group)
+                    tasks.append(task)
+                return tasks
         except (StatusNotFound, GroupNotFound, SQLAlchemyError) as e:
             log.error("Collect, sort and filter tasks: FAILED; " \
                       "Sort type=%r, filter=%r, status=%r, group=%r\nERROR: %s", 
@@ -93,18 +101,25 @@ class ORMManager:
             session.rollback()
             raise
 
-    # FRESH
+
     def list_groups(self, sort_type):
         try:
             sorting_map = {'id' : GroupORM.id, 'title' : GroupORM.title}
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(GroupORM)
                 query = query.order_by(sorting_map[sort_type])
                 query = query.options(joinedload(GroupORM.tasks))
+                rows = query.all()
                 log.debug("Collect and sort groups: SUCCESS; Sort type = %r", 
                           sort_type,
                 )
-                return query.all() 
+
+                groups = []
+                for g in rows:
+                    related_tasks=[t.title for t in g.tasks]
+                    group = Group(g.title, g.id, related_tasks)
+                    groups.append(group)
+                return groups
         except SQLAlchemyError as e:
             log.error("Collect and sort groups: FAILED; Sort type=%r\nERROR: %s", sort_type, e)
             session.rollback()
