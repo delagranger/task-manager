@@ -71,7 +71,7 @@ class ORMManager:
     def list_tasks(self, sort_type, filtered, status, group):
         try:
             sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(TaskORM)
                 if filtered:
                     if status:
@@ -90,7 +90,7 @@ class ORMManager:
                 
                 tasks = []
                 for t in rows:
-                    task = Task(t.title, t.status, t.id, t.group)
+                    task = Task(t.title, t.status, t.id, t.group.title)
                     tasks.append(task)
                 return tasks
         except (StatusNotFound, GroupNotFound, SQLAlchemyError) as e:
@@ -98,7 +98,6 @@ class ORMManager:
                       "Sort type=%r, filter=%r, status=%r, group=%r\nERROR: %s", 
                       sort_type, filtered, status, group, e,
             )
-            session.rollback()
             raise
 
 
@@ -122,7 +121,6 @@ class ORMManager:
                 return groups
         except SQLAlchemyError as e:
             log.error("Collect and sort groups: FAILED; Sort type=%r\nERROR: %s", sort_type, e)
-            session.rollback()
             raise
 
 
