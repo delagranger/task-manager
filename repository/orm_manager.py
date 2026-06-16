@@ -113,35 +113,31 @@ class ORMManager:
 
     def delete_task(self, ids):
         try:
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(TaskORM)
                 ids = self._ensure_task_id_exists(query, ids)
                 for id in ids:
                     task = query.filter(TaskORM.id == id).first()
                     session.delete(task)
-                    session.commit()
                 log.info("Delete task: SUCCESS; IDs=%r", ids)
                 return ids
         except (TIDNotFound, SQLAlchemyError) as e:
             log.error("Delete task: FAILED; IDs=%r\nERROR: %s", ids, e)
-            session.rollback()
             raise
 
 
     def delete_group(self, ids):
         try:
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(GroupORM)
                 ids = self._ensure_group_id_exists(query, ids)
                 for id in ids:
                     group = query.filter(GroupORM.id == id).first()
                     session.delete(group)
-                    session.commit()
                 log.info("Delete group: SUCCESS; IDs=%r", ids)
                 return ids
         except (GIDNotFound, SQLAlchemyError) as e:
             log.error("Delete group: FAILED; IDs=%r\nERROR: %s", ids, e)
-            session.rollback()
             raise
 
 
