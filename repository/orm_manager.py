@@ -65,7 +65,7 @@ class ORMManager:
             log.error("Add group: FAILED; Title=%r\nERROR: %s", group.title, e)
             raise
 
-
+    # FRESH
     def list_tasks(self, sort_type, filtered, status, group):
         try:
             sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
@@ -93,7 +93,7 @@ class ORMManager:
             session.rollback()
             raise
 
-
+    # FRESH
     def list_groups(self, sort_type):
         try:
             sorting_map = {'id' : GroupORM.id, 'title' : GroupORM.title}
@@ -143,24 +143,22 @@ class ORMManager:
 
     def set_status(self, ids, status):
         try:
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(TaskORM)
                 ids = self._ensure_task_id_exists(query, ids)
                 tasks = query.filter(TaskORM.id.in_(ids)).all()
                 for t in tasks:
                     t.status = status
-                    session.commit()
                 log.info("Set status: SUCCESS; IDs=%r, New status=%r", ids, status)
                 return ids, status
         except (TIDNotFound, SQLAlchemyError) as e:
             log.error("Set status: FAILED; IDs=%r, Status=%r\nERROR: %s", ids, status, e)
-            session.rollback()
             raise
 
 
     def format_task(self, ids, title, status, group):
         try:
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(TaskORM)
                 group = self._ensure_group_title_exists(session, group)
                 ids = self._ensure_task_id_exists(query, ids)
@@ -169,28 +167,24 @@ class ORMManager:
                     t.title = title
                     t.status = status
                     t.group = group
-                    session.commit()
                 log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", ids, title, status, group)
-                return ids, title, status, group
+                return ids, title, status, group.title
         except (GroupNotFound, TIDNotFound, SQLAlchemyError) as e:
             log.error("Format task: FAILED; ID=%r, Title=%r, Status=%r, Group=%r\nERROR: %s", ids, title, status, group, e)
-            session.rollback()
             raise
 
 
     def format_group(self, id, title):
         try:
-            with self.Session() as session:
+            with context(self.Session) as session:
                 query = session.query(GroupORM)
                 id = self._ensure_group_id_exists(query, id)
                 group = query.filter(GroupORM.id.in_(id)).first()
                 group.title = title
-                session.commit()
                 log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
-                return id, title
+                return id, group.title
         except (GIDNotFound, SQLAlchemyError) as e:
             log.error("Format group: FAILED; ID=%r, Title=%r\nERROR: %s", id, title, e)
-            session.rollback()
             raise
 
 
