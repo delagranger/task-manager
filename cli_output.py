@@ -10,7 +10,7 @@ class CLIOutput:
         try:
             print("Displayed tasks -->")
             for t in tasks:
-                print(f"ID: {t.id}; Title: {t.title}; Status: {t.status}; Group: {t.group}")
+                print(f"Task\nID: {t.id}; Title: {t.title}; Status: {t.status}; Group: {t.group}")
             print('-' * 19)
             log.debug("Display tasks: SUCCESS")
         except Exception as e:
@@ -23,9 +23,9 @@ class CLIOutput:
             print("Displayed groups -->")
             print('-' * 20)
             for g in groups:
-                print(f"Group\nTitle: {g.title}; ID: {g.id};")
+                print(f"Group\nID: {g.id}; Title: {g.title};")
                 for t in g.tasks:
-                    print(f"Task: {t.title}")
+                    print(f"Task: {t}")
                 print('-' * 20)
             log.debug("Display groups: SUCCESS")
         except Exception as e:
