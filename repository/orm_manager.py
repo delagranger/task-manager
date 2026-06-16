@@ -8,6 +8,7 @@ from repository.models.group_model import GroupORM
 from repository.models.task_model import TaskORM
 from exceptions import (StatusNotFound, GIDNotFound, TIDNotFound, GroupNotFound)
 from repository.models.base import Base
+from context_manager import orm_context_manager as context
 
 log = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ class ORMManager:
         try:
             self._engine = create_orm_engine()
             Base.metadata.create_all(self._engine)
-            self._Session = sessionmaker(bind=self._engine)
+            self.Session = sessionmaker(bind=self._engine)
         except SQLAlchemyError as e:
             log.error("Init SQLAlchemy ORM: Failed\nERROR: %s", e)
         else:
@@ -25,53 +26,50 @@ class ORMManager:
 
     def _create_default_group(self):
         try:
-            with self._Session() as session:
+            with context(self.Session) as session:
                 query = session.query(GroupORM)
                 result = query.filter(GroupORM.title == "default group").first()
                 if not result:
                     group_orm = GroupORM(title="default group")
                     session.add(group_orm)
-                    session.commit()
+                    session.flush()
                     log.debug("Insert default group: SUCCESS; %r", group_orm)
         except SQLAlchemyError as e:
-            session.rollback()
             log.error("Create default group: FAILED\nERROR: %s", e)
             raise
 
 
     def add_task(self, task):
         try:
-            with self._Session() as session:
+            with context(self.Session) as session:
                 group = self._ensure_group_title_exists(session, task.group)
                 task_orm = TaskORM(title=task.title, status=task.status, group = group)
                 session.add(task_orm)
-                session.commit()
+                session.flush()
                 log.info("Add task: SUCCESS; ID=%r, Title=%r, Status=%r, Group=%r", task_orm.id, task_orm.title, task_orm.status, task_orm.group)
-                return task_orm.id, task_orm.title, task_orm.status, task_orm.group
+                return task_orm.id, task_orm.title, task_orm.status, task_orm.group.title
         except SQLAlchemyError as e:
             log.error("Add task: FAILED; Title=%r, Status=%r, Group=%r\nERROR: %s", task.title, task.status, task.group, e)
-            session.rollback()
             raise
 
 
     def add_group(self, group):
         try:
-            with self._Session() as session:
+            with context(self.Session) as session:
                 group_orm = GroupORM(title=group.title)
                 session.add(group_orm)
-                session.commit()
+                session.flush()
                 log.info("Add group: SUCCESS; ID=%r, Title=%r", group_orm.id, group_orm.title)
                 return group_orm.id, group_orm.title
         except SQLAlchemyError as e:
             log.error("Add group: FAILED; Title=%r\nERROR: %s", group.title, e)
-            session.rollback()
             raise
 
 
     def list_tasks(self, sort_type, filtered, status, group):
         try:
             sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(TaskORM)
                 if filtered:
                     if status:
@@ -99,7 +97,7 @@ class ORMManager:
     def list_groups(self, sort_type):
         try:
             sorting_map = {'id' : GroupORM.id, 'title' : GroupORM.title}
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(GroupORM)
                 query = query.order_by(sorting_map[sort_type])
                 query = query.options(joinedload(GroupORM.tasks))
@@ -115,7 +113,7 @@ class ORMManager:
 
     def delete_task(self, ids):
         try:
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(TaskORM)
                 ids = self._ensure_task_id_exists(query, ids)
                 for id in ids:
@@ -132,7 +130,7 @@ class ORMManager:
 
     def delete_group(self, ids):
         try:
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(GroupORM)
                 ids = self._ensure_group_id_exists(query, ids)
                 for id in ids:
@@ -149,7 +147,7 @@ class ORMManager:
 
     def set_status(self, ids, status):
         try:
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(TaskORM)
                 ids = self._ensure_task_id_exists(query, ids)
                 tasks = query.filter(TaskORM.id.in_(ids)).all()
@@ -166,7 +164,7 @@ class ORMManager:
 
     def format_task(self, ids, title, status, group):
         try:
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(TaskORM)
                 group = self._ensure_group_title_exists(session, group)
                 ids = self._ensure_task_id_exists(query, ids)
@@ -186,7 +184,7 @@ class ORMManager:
 
     def format_group(self, id, title):
         try:
-            with self._Session() as session:
+            with self.Session() as session:
                 query = session.query(GroupORM)
                 id = self._ensure_group_id_exists(query, id)
                 group = query.filter(GroupORM.id.in_(id)).first()

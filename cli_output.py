@@ -35,7 +35,7 @@ class CLIOutput:
 
     def display_task_created(self, id, title, status, group):
         try:
-            print(f"Task created; ID={id}, Title={title}, Status={status}, {group}")
+            print(f"Task created; ID={id}, Title={title}, Status={status}, Group={group}")
             log.debug("Display task created: SUCCESS")
         except Exception as e:
             log.error("Display task created: FAILED\nERROR: %s", e)
