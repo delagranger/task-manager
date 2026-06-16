@@ -1,7 +1,13 @@
 class Task:
-    def __init__(self, title, status, group):
+    title: str
+    status: str
+    id: int | None
+    group = str | None
+
+    def __init__(self, title, status, id=None, group=None):
         self.title = title
         self.status = status
+        self.id = id
         self.group = group
 
 
