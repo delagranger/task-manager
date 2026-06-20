@@ -12,5 +12,5 @@ class GroupORM(Base):
     title: Mapped[str] = mapped_column(String(25), unique=True, nullable=False)
     tasks: Mapped[list["TaskORM"]] = relationship(back_populates="group", passive_deletes=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Group(ID={self.id}, title={self.title})"

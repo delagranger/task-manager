@@ -15,5 +15,5 @@ class TaskORM(Base):
     group_id: Mapped[int | None] = mapped_column(ForeignKey("groups.id", ondelete="SET NULL"), nullable=True)
     group: Mapped["GroupORM"] = relationship(back_populates="tasks")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Task(ID={self.id}, title={self.title}, status={self.status}, group={self.group})"

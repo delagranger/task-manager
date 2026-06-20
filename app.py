@@ -19,7 +19,7 @@ class App:
             print("Critical ERROR\nERROR: %s", e)
             sys.exit(1)
 
-    def run(self):
+    def run(self) -> None:
         try:
             args = self._argparser.parse_arguments()
             match args.command:

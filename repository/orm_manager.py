@@ -1,4 +1,5 @@
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Query
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 import logging
@@ -26,7 +27,7 @@ class ORMManager:
             self._create_default_group()
 
 
-    def _create_default_group(self):
+    def _create_default_group(self) -> None:
         try:
             with context(self.Session) as session:
                 query = session.query(GroupORM)
@@ -41,7 +42,7 @@ class ORMManager:
             raise
 
 
-    def add_task(self, task):
+    def add_task(self, task: Task) -> tuple[int, str, str, str]:
         try:
             with context(self.Session) as session:
                 group = self._ensure_group_title_exists(session, task.group)
@@ -55,7 +56,7 @@ class ORMManager:
             raise
 
 
-    def add_group(self, group):
+    def add_group(self, group: Group) -> tuple[int, str]:
         try:
             with context(self.Session) as session:
                 group_orm = GroupORM(title=group.title)
@@ -68,7 +69,7 @@ class ORMManager:
             raise
 
 
-    def list_tasks(self, sort_type, filtered, status, group):
+    def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
         try:
             sorting_map = {'id' : TaskORM.id, 'title' : TaskORM.title, 'status' : TaskORM.status, 'group_id' : TaskORM.group_id}
             with context(self.Session) as session:
@@ -90,7 +91,7 @@ class ORMManager:
                 
                 tasks = []
                 for t in rows:
-                    task = Task(t.title, t.status, t.id, t.group.title)
+                    task = Task(t.title, t.status, t.group.title, t.id)
                     tasks.append(task)
                 return tasks
         except (StatusNotFound, GroupNotFound, SQLAlchemyError) as e:
@@ -101,7 +102,7 @@ class ORMManager:
             raise
 
 
-    def list_groups(self, sort_type):
+    def list_groups(self, sort_type: str) -> list[Group]:
         try:
             sorting_map = {'id' : GroupORM.id, 'title' : GroupORM.title}
             with context(self.Session) as session:
@@ -124,7 +125,7 @@ class ORMManager:
             raise
 
 
-    def delete_task(self, ids):
+    def delete_task(self, ids: list[int]) -> list[int]:
         try:
             with context(self.Session) as session:
                 query = session.query(TaskORM)
@@ -139,22 +140,22 @@ class ORMManager:
             raise
 
 
-    def delete_group(self, ids):
+    def delete_group(self, id: int) -> list[int]:
         try:
             with context(self.Session) as session:
                 query = session.query(GroupORM)
-                ids = self._ensure_group_id_exists(query, ids)
-                for id in ids:
+                id = self._ensure_group_id_exists(query, id)
+                for id in id:
                     group = query.filter(GroupORM.id == id).first()
                     session.delete(group)
-                log.info("Delete group: SUCCESS; IDs=%r", ids)
-                return ids
+                log.info("Delete group: SUCCESS; IDs=%r", id)
+                return id
         except (GIDNotFound, SQLAlchemyError) as e:
-            log.error("Delete group: FAILED; IDs=%r\nERROR: %s", ids, e)
+            log.error("Delete group: FAILED; IDs=%r\nERROR: %s", id, e)
             raise
 
 
-    def set_status(self, ids, status):
+    def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
         try:
             with context(self.Session) as session:
                 query = session.query(TaskORM)
@@ -169,7 +170,7 @@ class ORMManager:
             raise
 
 
-    def format_task(self, ids, title, status, group):
+    def format_task(self, ids: list[int], title: str, status: str, group: str) -> tuple[list[int], str, str, str]:
         try:
             with context(self.Session) as session:
                 query = session.query(TaskORM)
@@ -187,7 +188,7 @@ class ORMManager:
             raise
 
 
-    def format_group(self, id, title):
+    def format_group(self, id: int, title: str) -> tuple[int, str]:
         try:
             with context(self.Session) as session:
                 query = session.query(GroupORM)
@@ -201,7 +202,7 @@ class ORMManager:
             raise
 
 
-    def _ensure_group_title_exists(self, session, title):
+    def _ensure_group_title_exists(self, session: Session, title: str) -> GroupORM:
         query = session.query(GroupORM)
         group = query.filter(GroupORM.title == title).first()
         if group:
@@ -212,7 +213,7 @@ class ORMManager:
             raise GroupNotFound(title)
 
 
-    def _ensure_task_id_exists(self, query, ids):
+    def _ensure_task_id_exists(self, query: Query[TaskORM], ids: list[int]) -> list[int]:
         found_ids = query.filter(TaskORM.id.in_(ids)).all()
         if len(found_ids) < len(ids):
             log.error("Ensure TaskID exists: FAILED; IDs=%r", ids)
@@ -222,17 +223,17 @@ class ORMManager:
             return ids
 
 
-    def _ensure_group_id_exists(self, query, ids):
-        found_ids = query.filter(GroupORM.id.in_(ids)).all()
-        if len(found_ids) < len(ids):
-            log.error("Ensure GroupID exists: FAILED; IDs=%r", ids)
-            raise GIDNotFound(ids)
+    def _ensure_group_id_exists(self, query: Query[GroupORM], id: int) -> list[int]:
+        found_ids = query.filter(GroupORM.id.in_(id)).all()
+        if len(found_ids) < len(id):
+            log.error("Ensure GroupID exists: FAILED; IDs=%r", id)
+            raise GIDNotFound(id)
         else:
-            log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", ids)
-            return ids
+            log.debug("Ensure GroupID exists: SUCCESS; IDs=%r", id)
+            return id
 
 
-    def _ensure_status_exists(self, query, status):
+    def _ensure_status_exists(self, query: Query[TaskORM], status: str) -> str:
         exists = query.filter(TaskORM.status == status).first()
         if exists:
             log.debug("Ensure status exists: SUCCESS; Status=%r", status)

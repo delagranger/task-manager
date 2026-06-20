@@ -22,7 +22,7 @@ class CLIArgParser:
         self._init_format_task()
         self._init_format_group()
 
-    def parse_arguments(self):
+    def parse_arguments(self) -> argparse.Namespace:
         try:
             args = self._parser.parse_args()
             log.info("Parse args: SUCCESS; args=%r", args)
@@ -31,7 +31,8 @@ class CLIArgParser:
             log.error("Parse args: FAILED\nERROR: %s", e)
             raise
 
-    def _init_add_task(self):
+
+    def _init_add_task(self) -> None:
         parser_add_task = self._subparsers.add_parser("add-task", 
                                                       help="Add task",
         )
@@ -53,7 +54,7 @@ class CLIArgParser:
         )
     
 
-    def _init_add_group(self):
+    def _init_add_group(self) -> None:
         parser_add_group = self._subparsers.add_parser("add-group", 
                                                        help="Add group",
         )
@@ -64,7 +65,7 @@ class CLIArgParser:
         )
 
 
-    def _init_list_tasks(self):
+    def _init_list_tasks(self) -> None:
         parser_list_tasks = self._subparsers.add_parser("list-tasks", 
                                                         help="Print all tasks",
         )
@@ -88,7 +89,7 @@ class CLIArgParser:
         )
     
 
-    def _init_list_groups(self):
+    def _init_list_groups(self) -> None:
         parser_list_groups = self._subparsers.add_parser("list-groups", 
                                                          help="Print all groups",
         )
@@ -100,7 +101,7 @@ class CLIArgParser:
         )
     
 
-    def _init_delete_task(self):
+    def _init_delete_task(self) -> None:
         parser_delete_task = self._subparsers.add_parser("delete-task", 
                                                          help="Delete task",
         )
@@ -111,7 +112,7 @@ class CLIArgParser:
         )
     
 
-    def _init_delete_group(self):
+    def _init_delete_group(self) -> None:
         parser_delete_group = self._subparsers.add_parser("delete-group", 
                                                           help="Delete Group",
         )
@@ -122,7 +123,7 @@ class CLIArgParser:
         )
     
 
-    def _init_set_status(self):
+    def _init_set_status(self) -> None:
         parser_set_status = self._subparsers.add_parser("set-status", 
                                                         help="Set task`s status",
         )
@@ -137,7 +138,7 @@ class CLIArgParser:
         )
     
 
-    def _init_format_task(self):
+    def _init_format_task(self) -> None:
         parser_format_task = self._subparsers.add_parser("format-task", 
                                                          help="Format task",
         )
@@ -163,7 +164,7 @@ class CLIArgParser:
         )
     
 
-    def _init_format_group(self):
+    def _init_format_group(self) -> None:
         parser_format_group = self._subparsers.add_parser("format-group", 
                                                           help="Format group",
         )
