@@ -8,6 +8,7 @@ class CLIOutput:
     def __init__(self):
         pass
 
+
     def display_tasks(self, tasks: list[Task]) -> None:
         try:
             print("Displayed tasks -->")

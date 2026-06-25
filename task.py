@@ -13,5 +13,3 @@ class Task:
 
     def __repr__(self) -> str:
         return f"Task(Title={self.title}, status={self.status}, group={self.group})"
-
-

@@ -1,4 +1,5 @@
 import argparse
+from argparse import Namespace
 import logging
 
 log = logging.getLogger(__name__)
@@ -22,7 +23,8 @@ class CLIArgParser:
         self._init_format_task()
         self._init_format_group()
 
-    def parse_arguments(self) -> argparse.Namespace:
+
+    def parse_arguments(self) -> Namespace:
         try:
             args = self._parser.parse_args()
             log.info("Parse args: SUCCESS; args=%r", args)
@@ -136,7 +138,7 @@ class CLIArgParser:
                                        choices=["active", "frozen", "finished"], 
                                        help="Task status",
         )
-    
+
 
     def _init_format_task(self) -> None:
         parser_format_task = self._subparsers.add_parser("format-task", 

@@ -19,6 +19,7 @@ class App:
             print("Critical ERROR\nERROR: %s", e)
             sys.exit(1)
 
+
     def run(self) -> None:
         try:
             args = self._argparser.parse_arguments()
@@ -58,4 +59,3 @@ class App:
             except Exception as e:
                 print("Unable to display error")
             
-

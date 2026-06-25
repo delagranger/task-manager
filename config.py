@@ -3,7 +3,6 @@ import logging
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Engine
 
-
 LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
 def log_setup() -> None:
@@ -25,7 +24,7 @@ def log_setup() -> None:
     log.info(f"Logging is started with level {log_level_str}")
 
 
-def create_orm_engine() -> Engine:
+def build_engine() -> Engine:
     load_dotenv()
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
@@ -33,6 +32,6 @@ def create_orm_engine() -> Engine:
     port = os.getenv("DB_PORT")
     dbname = os.getenv("DB_NAME")
 
-    engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}")
+    engine = build_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}")
 
     return engine

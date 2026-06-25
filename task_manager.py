@@ -17,7 +17,7 @@ TASKS_SORT_TYPES = ['id', 'title', 'status', 'group_id']
 class TaskManager:
     def __init__(self):
         self._orm_manager = ORMManager()
- 
+
 
     def add_task(self, title: str, status: str, group: str) -> tuple[int, str, str, str]:  
         title, cur_length = self._ensure_title_is_correct("task", title)
@@ -152,3 +152,4 @@ class TaskManager:
                       status,
             )
             return status
+        

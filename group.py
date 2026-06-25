@@ -3,7 +3,6 @@ class Group:
     id: int | None
     tasks: list[str] | None
 
-
     def __init__(self, title: str, id: int | None = None, tasks: list[str] | None = None):
         self.title = title
         self.id = id
@@ -12,4 +11,3 @@ class Group:
 
     def __repr__(self) -> str:
         return f"Group(Title={self.title})"
-
