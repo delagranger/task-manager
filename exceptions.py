@@ -20,12 +20,6 @@ class GroupNotFound(ValidationError):
         super().__init__(f"Group '{title}' is not found")
 
 
-class StatusNotFound(ValidationError):
-    def __init__(self, status: str, statuses: list[str]) -> None:
-        self.status = status
-        super().__init__(f"Status '{status}' is not found. Possible statuses: {statuses}")
-
-
 class SortTypeNotFound(ValidationError):
     def __init__(self, sort_type: str, sort_types: list[str]) -> None:
         self.sort_type = sort_type
