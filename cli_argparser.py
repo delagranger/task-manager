@@ -25,13 +25,9 @@ class CLIArgParser:
 
 
     def parse_arguments(self) -> Namespace:
-        try:
-            args = self._parser.parse_args()
-            log.info("Parse args: SUCCESS; args=%r", args)
-            return args
-        except Exception as e:
-            log.error("Parse args: FAILED\nERROR: %s", e)
-            raise
+        args = self._parser.parse_args()
+        log.info("Parse args: SUCCESS; args=%r", args)
+        return args
 
 
     def _init_add_task(self) -> None:

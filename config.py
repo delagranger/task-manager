@@ -32,6 +32,6 @@ def build_engine() -> Engine:
     port = os.getenv("DB_PORT")
     dbname = os.getenv("DB_NAME")
 
-    engine = build_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}")
+    engine = create_engine(f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}")
 
     return engine

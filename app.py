@@ -54,8 +54,5 @@ class App:
                 case _:
                     self._output.display_incorrect_command(args.command)
         except Exception as e:
-            try:
-                self._output.display_error(e, args.command)
-            except Exception as e:
-                print("Unable to display error")
+            self._output.display_error(e, args.command)
             
