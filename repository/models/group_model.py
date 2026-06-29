@@ -6,10 +6,10 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
-from repository.models.base import Base
+from .base import Base
 
 if TYPE_CHECKING:
-    from repository.models.task_model import TaskModel
+    from .task_model import TaskModel
 
 class GroupModel(Base):
     __tablename__ = "groups"

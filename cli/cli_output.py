@@ -1,6 +1,5 @@
 import logging
-from task import Task
-from group import Group
+from domain import Task, Group
 
 log = logging.getLogger(__name__)
 

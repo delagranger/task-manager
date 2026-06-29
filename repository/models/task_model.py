@@ -7,10 +7,10 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
-from repository.models.base import Base
+from .base import Base
 
 if TYPE_CHECKING:
-    from repository.models.group_model import GroupModel
+    from .group_model import GroupModel
 
 class TaskModel(Base):
     __tablename__ = "tasks"

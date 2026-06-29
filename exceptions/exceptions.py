@@ -2,6 +2,12 @@ class ValidationError(Exception):
         pass
 
 
+class StatusNotFound(ValidationError):
+    def __init__(self, status: str, statuses: list[str]) -> None:
+        self.status = status
+        super().__init__(f"Status '{status}' is not found. Possible statuses: {statuses}")
+
+
 class GIDNotFound(ValidationError):
     def __init__(self, id: str) -> None:
         self.group_id = id

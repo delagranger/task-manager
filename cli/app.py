@@ -1,9 +1,9 @@
 import sys
 import logging
 
-from cli_argparser import CLIArgParser
-from cli_output import CLIOutput
-from task_manager import TaskManager
+from .cli_argparser import CLIArgParser
+from .cli_output import CLIOutput
+from services import TaskManager
 
 log = logging.getLogger(__name__)
 

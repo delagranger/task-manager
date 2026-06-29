@@ -1,10 +1,8 @@
 import logging
 
-from task import Task
-from group import Group
-from repository.orm_manager import ORMManager
-from exceptions import (FilterNotExists, SortTypeNotFound, 
-                        IncorrectLength, StatusNotFound)
+from domain import Task, Group
+from repository import ORMManager
+from exceptions import (FilterNotExists, SortTypeNotFound, IncorrectLength, StatusNotFound)
 
 log = logging.getLogger(__name__)
 

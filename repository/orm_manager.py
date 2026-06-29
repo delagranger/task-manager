@@ -3,12 +3,9 @@ from sqlalchemy.orm import joinedload
 import logging
 
 from config import build_engine
-from repository.models.group_model import GroupModel
-from repository.models.task_model import TaskModel
-from repository.models.base import Base
-from repository.session_context_manager import session_scope
-from group import Group
-from task import Task
+from .models import GroupModel, TaskModel, Base
+from .session_context_manager import session_scope
+from domain import Group, Task
 
 from exceptions import (GIDNotFound, TIDNotFound, GroupNotFound)
 
@@ -158,7 +155,7 @@ class ORMManager:
     def format_group(self, id: list[int], title: str) -> tuple[list[int], str]:
         with session_scope(self.Session, "Format group") as session:
             query = session.query(GroupModel)
-            group = query.filter(GroupModel.id.in_(id)).first()
+            group = query.filter(GroupModel.id.in_(id)).all()
             if len(group) < len(id):
                 raise GIDNotFound(id)
             group.title = title
