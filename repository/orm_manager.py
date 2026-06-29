@@ -106,8 +106,8 @@ class ORMManager:
 
             for task in tasks:
                 session.delete(task)
-            log.info("Delete task: SUCCESS; IDs=%r", ids)
-            return ids
+        log.info("Delete task: SUCCESS; IDs=%r", ids)
+        return ids
 
 
     def delete_group(self, id: list[int]) -> list[int]:
@@ -119,8 +119,8 @@ class ORMManager:
             
             for group in groups:
                 session.delete(group)
-            log.info("Delete group: SUCCESS; IDs=%r", id)
-            return id
+        log.info("Delete group: SUCCESS; IDs=%r", id)
+        return id
 
 
     def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
@@ -131,8 +131,8 @@ class ORMManager:
                 raise TIDNotFound(ids)
             for t in tasks:
                 t.status = status
-            log.info("Set status: SUCCESS; IDs=%r, New status=%r", ids, status)
-            return ids, status
+        log.info("Set status: SUCCESS; IDs=%r, New status=%r", ids, status)
+        return ids, status
 
 
     def format_task(self, ids: list[int], title: str, status: str, group: str) -> tuple[list[int], str, str, str]:
@@ -148,16 +148,17 @@ class ORMManager:
                 t.title = title
                 t.status = status
                 t.group = found_group
-            log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", ids, title, status, found_group.title)
-            return ids, title, status, found_group.title
+        log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", ids, title, status, group)
+        return ids, title, status, group
 
 
     def format_group(self, id: list[int], title: str) -> tuple[list[int], str]:
         with session_scope(self.Session, "Format group") as session:
             query = session.query(GroupModel)
-            group = query.filter(GroupModel.id.in_(id)).all()
-            if len(group) < len(id):
+            groups = query.filter(GroupModel.id.in_(id)).all()
+            if len(groups) < len(id):
                 raise GIDNotFound(id)
-            group.title = title
-            log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
-            return id, group.title
+            for group in groups:
+                group.title = title
+        log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
+        return id, title
