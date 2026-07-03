@@ -20,7 +20,7 @@ class ORMManager:
 
 
     def _create_default_group(self) -> None:
-        with session_scope(self.Session, "Create default group") as session:
+        with session_scope(self.Session) as session:
             query = session.query(GroupModel)
             result = query.filter(GroupModel.title == "default group").first()
             if not result:
@@ -31,7 +31,7 @@ class ORMManager:
 
 
     def add_task(self, task: Task) -> tuple[int, str, str, str]:
-        with session_scope(self.Session, "Add task") as session:
+        with session_scope(self.Session) as session:
             found_group = session.query(GroupModel).filter(GroupModel.title == task.group).first()
             if not found_group:
                 raise GroupNotFound(task.group)
@@ -43,7 +43,7 @@ class ORMManager:
 
 
     def add_group(self, group: Group) -> tuple[int, str]:
-        with session_scope(self.Session, "Add group") as session:
+        with session_scope(self.Session) as session:
             group_orm = GroupModel(title=group.title)
             session.add(group_orm)
             session.flush()
@@ -53,7 +53,7 @@ class ORMManager:
 
     def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
         sorting_map = {'id' : TaskModel.id, 'title' : TaskModel.title, 'status' : TaskModel.status, 'group_id' : TaskModel.group_id}
-        with session_scope(self.Session, "List tasks") as session:
+        with session_scope(self.Session) as session:
             query = session.query(TaskModel)
             if filtered:
                 if status:
@@ -80,7 +80,7 @@ class ORMManager:
 
     def list_groups(self, sort_type: str) -> list[Group]:
         sorting_map = {'id' : GroupModel.id, 'title' : GroupModel.title}
-        with session_scope(self.Session, "List groups") as session:
+        with session_scope(self.Session) as session:
             query = session.query(GroupModel)
             query = query.order_by(sorting_map[sort_type])
             query = query.options(joinedload(GroupModel.tasks))
@@ -98,7 +98,7 @@ class ORMManager:
 
 
     def delete_task(self, ids: list[int]) -> list[int]:
-        with session_scope(self.Session, "Delete task") as session:
+        with session_scope(self.Session) as session:
             query = session.query(TaskModel)
             tasks = query.filter(TaskModel.id.in_(ids)).all()
             if len(tasks) < len(ids):
@@ -111,7 +111,7 @@ class ORMManager:
 
 
     def delete_group(self, id: list[int]) -> list[int]:
-        with session_scope(self.Session, "Delete group") as session:
+        with session_scope(self.Session) as session:
             query = session.query(GroupModel)
             groups = query.filter(GroupModel.id.in_(id)).all()
             if len(groups) < len(id):
@@ -124,7 +124,7 @@ class ORMManager:
 
 
     def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
-        with session_scope(self.Session, "Set status") as session:
+        with session_scope(self.Session) as session:
             query = session.query(TaskModel)
             tasks = query.filter(TaskModel.id.in_(ids)).all()
             if len(tasks) < len(ids):
@@ -136,7 +136,7 @@ class ORMManager:
 
 
     def format_task(self, ids: list[int], title: str, status: str, group: str) -> tuple[list[int], str, str, str]:
-        with session_scope(self.Session, "Format task") as session:
+        with session_scope(self.Session) as session:
             query = session.query(TaskModel)
             found_group = session.query(GroupModel).filter(GroupModel.title == group).first()
             if not found_group:
@@ -153,7 +153,7 @@ class ORMManager:
 
 
     def format_group(self, id: list[int], title: str) -> tuple[list[int], str]:
-        with session_scope(self.Session, "Format group") as session:
+        with session_scope(self.Session) as session:
             query = session.query(GroupModel)
             groups = query.filter(GroupModel.id.in_(id)).all()
             if len(groups) < len(id):

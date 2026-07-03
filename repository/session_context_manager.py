@@ -6,13 +6,13 @@ import logging
 log = logging.getLogger(__name__)
 
 @contextmanager
-def session_scope(session_factory: sessionmaker, operation: str) -> Generator[Session, None, None]:
+def session_scope(session_factory: sessionmaker) -> Generator[Session, None, None]:
     session = session_factory()
     try:
         yield session
     except Exception:
         session.rollback()
-        log.exception("%s: FAILED", operation)
+        log.exception("OPERATION FAILED")
         raise
     else:
         session.commit()
