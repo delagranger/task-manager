@@ -1,6 +1,13 @@
+from fastapi import FastAPI
+
+from api.routes.tasks import router as tasks_router
+from api.routes.groups import router as groups_router
 from config import log_setup
+
 log_setup()
 
-if __name__ == "__main__": 
-    pass
+app = FastAPI()
+
+app.include_router(tasks_router, prefix="/api/v1")
+app.include_router(groups_router, prefix="/api/v1")
     
