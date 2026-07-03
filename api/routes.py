@@ -6,7 +6,6 @@ app = FastAPI()
 
 tm = TaskManager()
 
-
 @app.get("/tasks")
 def get_tasks():
     return tm.list_tasks(
@@ -14,4 +13,10 @@ def get_tasks():
         filtered=True,
         status="active",
         group=""
+    )
+
+@app.get("/groups")
+def get_groups():
+    return tm.list_groups(
+        sort_type="id"
     )
