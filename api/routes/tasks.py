@@ -30,3 +30,10 @@ def post_task(
         group=group
     )
     return f"Task id={task[0]} title={task[1]} is posted!"
+
+@router.delete("/delete")
+def delete_task(
+    id: int
+):
+    id = tm.delete_task(id)
+    return f"Task with id={id} deleted!"

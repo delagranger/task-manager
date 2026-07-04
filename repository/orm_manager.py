@@ -97,29 +97,25 @@ class ORMManager:
             return groups
 
 
-    def delete_task(self, ids: list[int]) -> list[int]:
+    def delete_task(self, id: int) -> int:
         with session_scope(self.Session) as session:
             query = session.query(TaskModel)
-            tasks = query.filter(TaskModel.id.in_(ids)).all()
-            if len(tasks) < len(ids):
-                raise TIDNotFound(ids)
-
-            for task in tasks:
-                session.delete(task)
-        log.info("Delete task: SUCCESS; IDs=%r", ids)
-        return ids
+            task = query.filter(TaskModel.id == id).first()
+            if not task:
+                raise TIDNotFound(id)
+            session.delete(task)
+        log.info("Delete task: SUCCESS; ID=%r", id)
+        return id
 
 
-    def delete_group(self, id: list[int]) -> list[int]:
+    def delete_group(self, id: int) -> int:
         with session_scope(self.Session) as session:
             query = session.query(GroupModel)
-            groups = query.filter(GroupModel.id.in_(id)).all()
-            if len(groups) < len(id):
+            group = query.filter(GroupModel.id == id).first()
+            if not group:
                 raise GIDNotFound(id)
-            
-            for group in groups:
-                session.delete(group)
-        log.info("Delete group: SUCCESS; IDs=%r", id)
+            session.delete(group)
+        log.info("Delete group: SUCCESS; ID=%r", id)
         return id
 
 

@@ -20,3 +20,10 @@ def post_group(
         title=title
     )
     return f"Group id={group[0]} title={group[1]} is posted!"
+
+@router.delete("/delete")
+def delete_group(
+    id: int
+):
+    id = tm.delete_group(id)
+    return f"Group with id={id} deleted!"

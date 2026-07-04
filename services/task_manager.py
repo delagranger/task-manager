@@ -45,14 +45,14 @@ class TaskManager:
         return groups
 
    
-    def delete_task(self, ids: list[int]) -> list[int]:
-        ids = self._orm_manager.delete_task(ids)
-        return ids
+    def delete_task(self, id: int) -> int:
+        id = self._orm_manager.delete_task(id)
+        return id
 
 
-    def delete_group(self, ids: list[int]) -> list[int]:
-        ids = self._orm_manager.delete_group(ids)
-        return ids
+    def delete_group(self, id: int) -> int:
+        id = self._orm_manager.delete_group(id)
+        return id
 
 
     def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
