@@ -52,6 +52,7 @@ class ORMManager:
 
 
     def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
+        print("ORM list_tasks entered")
         sorting_map = {'id' : TaskModel.id, 'title' : TaskModel.title, 'status' : TaskModel.status, 'group_id' : TaskModel.group_id}
         with session_scope(self.Session) as session:
             query = session.query(TaskModel)
@@ -114,47 +115,42 @@ class ORMManager:
             group = query.filter(GroupModel.id == id).first()
             if not group:
                 raise GIDNotFound(id)
+            
+            default_group = query.filter(GroupModel.title == "default group").first()
+            for task in group.tasks:
+                task.group = default_group
+                
             session.delete(group)
         log.info("Delete group: SUCCESS; ID=%r", id)
         return id
 
 
-    def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
+    def patch_task(self, id: int, title: str | None, status: str | None, group: str | None) -> tuple[int, str | None, str | None, str | None]:
         with session_scope(self.Session) as session:
             query = session.query(TaskModel)
-            tasks = query.filter(TaskModel.id.in_(ids)).all()
-            if len(tasks) < len(ids):
-                raise TIDNotFound(ids)
-            for t in tasks:
-                t.status = status
-        log.info("Set status: SUCCESS; IDs=%r, New status=%r", ids, status)
-        return ids, status
+            task = query.filter(TaskModel.id == id).first()
+            if not task:
+                raise TIDNotFound(id)
+            if title is not None:
+                task.title = title
+            if status is not None:
+                task.status = status
+            if group is not None:
+                found_group = session.query(GroupModel).filter(GroupModel.title == group).first()
+                if not found_group:
+                    raise GroupNotFound(group)
+                task.group = found_group
+        log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", id, title, status, group)
+        return task.id, task.title, task.status, task.group.title if task.group else None
 
 
-    def format_task(self, ids: list[int], title: str, status: str, group: str) -> tuple[list[int], str, str, str]:
-        with session_scope(self.Session) as session:
-            query = session.query(TaskModel)
-            found_group = session.query(GroupModel).filter(GroupModel.title == group).first()
-            if not found_group:
-                raise GroupNotFound(group)
-            tasks = query.filter(TaskModel.id.in_(ids)).all()
-            if len(tasks) < len(ids):
-                raise TIDNotFound(ids)
-            for t in tasks:
-                t.title = title
-                t.status = status
-                t.group = found_group
-        log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", ids, title, status, group)
-        return ids, title, status, group
-
-
-    def format_group(self, id: list[int], title: str) -> tuple[list[int], str]:
+    def patch_group(self, id: int, title: str | None) -> tuple[int, str | None]:
         with session_scope(self.Session) as session:
             query = session.query(GroupModel)
-            groups = query.filter(GroupModel.id.in_(id)).all()
-            if len(groups) < len(id):
+            group = query.filter(GroupModel.id == id).first()
+            if not group:
                 raise GIDNotFound(id)
-            for group in groups:
+            if title is not None:
                 group.title = title
         log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
-        return id, title
+        return group.id, group.title

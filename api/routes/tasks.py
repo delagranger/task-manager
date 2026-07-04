@@ -1,39 +1,46 @@
 from fastapi import APIRouter
 
 from api.dependencies import tm
+from api.schemas.task import TaskCreate, TaskPatch
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
+
 @router.get("/")
-def get_tasks(
-    sort_type: str = "id",
-    filtered: bool = False,
-    status: str = "",
-    group: str = ""
-):
+def get_tasks():
     return tm.list_tasks(
-        sort_type,
-        filtered,
-        status,
-        group
+        "id",
+        False,
+        "",
+        ""
     )
 
-@router.post("/add")
-def post_task(
-        title: str,
-        status: str,
-        group: str
-):
-    task = tm.add_task(
-        title=title,
-        status=status,
-        group=group
-    )
-    return f"Task id={task[0]} title={task[1]} is posted!"
 
-@router.delete("/delete")
-def delete_task(
-    id: int
+@router.post("/")
+def post_task(task: TaskCreate):
+    return tm.add_task(
+        title=task.title,
+        status=task.status,
+        group=task.group
+    )
+
+
+@router.delete("/{id}")
+def delete_task(id: int):
+    tm.delete_task(id)
+    return {
+        "message" : f"Task with id={id} deleted!"
+    }
+
+
+@router.patch("/{id}")
+def patch_task(
+    id: int,
+    task: TaskPatch
 ):
-    id = tm.delete_task(id)
-    return f"Task with id={id} deleted!"
+    return tm.patch_task(
+        id=id,
+        title=task.title,
+        status=task.status,
+        group=task.group
+    )
