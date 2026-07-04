@@ -11,3 +11,12 @@ def get_groups(
     return tm.list_groups(
         sort_type
     )
+
+@router.post("/add")
+def post_group(
+    title: str
+):
+    group = tm.add_group(
+        title=title
+    )
+    return f"Group id={group[0]} title={group[1]} is posted!"

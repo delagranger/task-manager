@@ -17,3 +17,16 @@ def get_tasks(
         status,
         group
     )
+
+@router.post("/add")
+def post_task(
+        title: str,
+        status: str,
+        group: str
+):
+    task = tm.add_task(
+        title=title,
+        status=status,
+        group=group
+    )
+    return f"Task id={task[0]} title={task[1]} is posted!"
