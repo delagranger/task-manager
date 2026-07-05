@@ -25,5 +25,10 @@ def delete_group(id: int):
 
 
 @router.patch("/{id}")
-def patch_group(group_id: int,group: GroupPatch):
-    return tm.patch_group(group_id, group.title)
+def patch_group(id: int, group: GroupPatch):
+    new_group = tm.patch_group(
+        id, group.title
+    )
+    return {
+        "message": f"Group ID={new_group[0]} title={new_group[1]}"
+    }

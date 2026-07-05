@@ -7,14 +7,18 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
 @router.get("/")
-def get_tasks():
+def get_tasks(sort_type: str = "id",
+              filtered: bool = False,
+              status: str = "",
+              group: str = ""
+              ):
     return tm.list_tasks(
-        "id",
-        False,
-        "",
-        ""
+        sort_type,
+        filtered,
+        status,
+        group
     )
-
+ 
 
 @router.post("/")
 def post_task(task: TaskCreate):
@@ -34,13 +38,13 @@ def delete_task(id: int):
 
 
 @router.patch("/{id}")
-def patch_task(
-    id: int,
-    task: TaskPatch
-):
-    return tm.patch_task(
+def patch_task(id: int, task: TaskPatch):
+    new_task = tm.patch_task(
         id=id,
         title=task.title,
         status=task.status,
         group=task.group
     )
+    return {
+        "message": f"Task ID={new_task[0]} title={new_task[1]}, status={new_task[2]}, group={new_task[3]}"
+    }

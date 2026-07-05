@@ -2,9 +2,9 @@ from pydantic import BaseModel
 
 
 class TaskCreate(BaseModel):
-    title: str
-    status: str
-    group: str
+    title: str = "default task"
+    status: str = "active"
+    group: str = "default group"
 
 
 class TaskPatch(BaseModel):

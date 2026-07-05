@@ -140,8 +140,9 @@ class ORMManager:
                 if not found_group:
                     raise GroupNotFound(group)
                 task.group = found_group
-        log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", id, title, status, group)
-        return task.id, task.title, task.status, task.group.title if task.group else None
+            new_task = task.id, task.title, task.status, task.group.title
+        log.info("Format task: SUCCESS; ID=%r, New title=%r, New status=%r, New group=%r", new_task[0], new_task[1], new_task[2], new_task[3])
+        return new_task
 
 
     def patch_group(self, id: int, title: str | None) -> tuple[int, str | None]:
@@ -152,5 +153,6 @@ class ORMManager:
                 raise GIDNotFound(id)
             if title is not None:
                 group.title = title
-        log.info("Format group: SUCCESS; ID=%r, New title=%r", id, title)
-        return group.id, group.title
+            new_group = group.id, group.title
+        log.info("Format group: SUCCESS; ID=%r, New title=%r", new_group[0], new_group[1])
+        return new_group
