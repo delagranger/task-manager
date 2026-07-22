@@ -33,7 +33,11 @@ class TaskManager:
 
 
     def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
-        sort_type = self._ensure_sort_type_is_correct("task", sort_type)
+        print("list_tasks entered")
+        if sort_type is not None:
+            sort_type = self._ensure_sort_type_is_correct("task", sort_type)
+        else:
+            sort_type = "id"
         self._ensure_filter_exists(filtered, status, group)
         tasks = self._orm_manager.list_tasks(sort_type, filtered, status, group)
         return tasks
@@ -45,33 +49,31 @@ class TaskManager:
         return groups
 
    
-    def delete_task(self, ids: list[int]) -> list[int]:
-        ids = self._orm_manager.delete_task(ids)
-        return ids
+    def delete_task(self, id: int) -> int:
+        id = self._orm_manager.delete_task(id)
+        return id
 
 
-    def delete_group(self, ids: list[int]) -> list[int]:
-        ids = self._orm_manager.delete_group(ids)
-        return ids
+    def delete_group(self, id: int) -> int:
+        id = self._orm_manager.delete_group(id)
+        return id
 
 
-    def set_status(self, ids: list[int], status: str) -> tuple[list[int], str]:
-        status = self._ensure_status_is_correct(status)
-        ids, status = self._orm_manager.set_status(ids, status)
-        return ids, status
-
-
-    def format_task(self, ids: list[int], title: str, status: str, group: str) -> tuple[list[int], str, str, str]:
-        title, cur_length = self._ensure_title_is_correct("task", title)
-        ids, title, status, group = self._orm_manager.format_task(
-            ids, title, status, group
+    def patch_task(self, id: int, title: str | None, status: str | None, group: str | None) -> tuple[int, str | None, str | None, str | None]:
+        if title is not None:
+            title, cur_length = self._ensure_title_is_correct("task", title)
+        if status is not None:
+            status = self._ensure_status_is_correct(status)
+        id, title, status, group = self._orm_manager.patch_task(
+            id, title, status, group
         )
-        return ids, title, status, group
+        return id, title, status, group
     
 
-    def format_group(self, id: int, title: str) -> tuple[int, str]:
-        title, cur_length = self._ensure_title_is_correct("group", title)
-        id, title = self._orm_manager.format_group(id, title)
+    def patch_group(self, id: int, title: str | None) -> tuple[int, str | None]:
+        if title is not None:
+            title, cur_length = self._ensure_title_is_correct("group", title)
+        id, title = self._orm_manager.patch_group(id, title)
         return id, title
 
 
