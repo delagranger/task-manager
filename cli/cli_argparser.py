@@ -119,21 +119,6 @@ class CLIArgParser:
                                          nargs='+', 
                                          help="Group`s ID",
         )
-    
-
-    def _init_set_status(self) -> None:
-        parser_set_status = self._subparsers.add_parser("set-status", 
-                                                        help="Set task`s status",
-        )
-        parser_set_status.add_argument("id", 
-                                       type=int, 
-                                       nargs='+', 
-                                       help="Objects ID",
-        )
-        parser_set_status.add_argument("-s", "--status", 
-                                       choices=["active", "frozen", "finished"], 
-                                       help="Task status",
-        )
 
 
     def _init_format_task(self) -> None:

@@ -39,10 +39,6 @@ class CLIOutput:
 
     def display_groups_deleted(self, ids: list[int]) -> None:
         print(f"Groups deleted; IDs={ids}")
-
-
-    def display_status_set(self, ids: list[int], status: str) -> None:
-        print(f"Status for tasks {ids} set. New status is {status}")
            
 
     def display_task_formated(self, ids: list[int], title: str, status: str, group: str) -> None:

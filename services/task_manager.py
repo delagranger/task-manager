@@ -33,7 +33,6 @@ class TaskManager:
 
 
     def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
-        print("list_tasks entered")
         if sort_type is not None:
             sort_type = self._ensure_sort_type_is_correct("task", sort_type)
         else:

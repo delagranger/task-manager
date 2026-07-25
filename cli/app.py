@@ -42,9 +42,6 @@ class App:
                 case "delete-group":
                     ids = self._tm.delete_group(args.id)
                     self._output.display_groups_deleted(ids)
-                case "set-status":
-                    ids, status = self._tm.set_status(args.id, args.status)
-                    self._output.display_status_set(ids, status)
                 case "format-task":
                     ids, title, status, group = self._tm.format_task(args.id, args.title, args.status, args.group)
                     self._output.display_task_formated(ids, title, status, group)

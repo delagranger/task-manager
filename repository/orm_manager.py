@@ -35,8 +35,9 @@ class ORMManager:
             found_group = session.query(GroupModel).filter(GroupModel.title == task.group).first()
             if not found_group:
                 raise GroupNotFound(task.group)
-            task_orm = TaskModel(title=task.title, status=task.status, group = found_group)
-            session.add(task_orm)
+            else:
+                task_orm = TaskModel(title=task.title, status=task.status, group = found_group)
+                session.add(task_orm)
             session.flush()
             log.info("Add task: SUCCESS; ID=%r, Title=%r, Status=%r, Group=%r", task_orm.id, task_orm.title, task_orm.status, task_orm.group)
             return task_orm.id, task_orm.title, task_orm.status, task_orm.group.title
@@ -63,7 +64,8 @@ class ORMManager:
                     found_group = session.query(GroupModel).filter(GroupModel.title == group).first()
                     if not found_group:
                         raise GroupNotFound(group)
-                    query = query.filter(TaskModel.group_id == found_group.id)
+                    else:
+                        query = query.filter(TaskModel.group_id == found_group.id)
             query = query.order_by(sorting_map[sort_type])
             query = query.options(joinedload(TaskModel.group))
             rows = query.all()
@@ -104,7 +106,8 @@ class ORMManager:
             task = query.filter(TaskModel.id == id).first()
             if not task:
                 raise TIDNotFound(id)
-            session.delete(task)
+            else:
+                session.delete(task)
         log.info("Delete task: SUCCESS; ID=%r", id)
         return id
 
@@ -115,12 +118,12 @@ class ORMManager:
             group = query.filter(GroupModel.id == id).first()
             if not group:
                 raise GIDNotFound(id)
-            
-            default_group = query.filter(GroupModel.title == "default group").first()
-            for task in group.tasks:
-                task.group = default_group
-                
-            session.delete(group)
+            else:
+                default_group = query.filter(GroupModel.title == "default group").first()
+                for task in group.tasks:
+                    task.group = default_group
+                    
+                session.delete(group)
         log.info("Delete group: SUCCESS; ID=%r", id)
         return id
 
