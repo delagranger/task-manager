@@ -7,7 +7,7 @@ from .models import GroupModel, TaskModel, Base
 from .session_context_manager import session_scope
 from domain import Group, Task
 
-from exceptions import (GIDNotFound, TIDNotFound, GroupNotFound)
+from exceptions import GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExists
 
 log = logging.getLogger(__name__)
 
@@ -45,11 +45,16 @@ class ORMManager:
 
     def add_group(self, group: Group) -> tuple[int, str]:
         with session_scope(self.Session) as session:
-            group_orm = GroupModel(title=group.title)
-            session.add(group_orm)
-            session.flush()
-            log.info("Add group: SUCCESS; ID=%r, Title=%r", group_orm.id, group_orm.title)
-            return group_orm.id, group_orm.title
+            query = session.query(GroupModel)
+            existing_group = query.filter(GroupModel.title == group.title).first()
+            if existing_group:
+                raise GroupAlreadyExists(group.title)
+            else:
+                group_orm = GroupModel(title=group.title)
+                session.add(group_orm)
+                session.flush()
+                log.info("Add group: SUCCESS; ID=%r, Title=%r", group_orm.id, group_orm.title)
+                return group_orm.id, group_orm.title
 
 
     def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
@@ -155,7 +160,11 @@ class ORMManager:
             if not group:
                 raise GIDNotFound(id)
             if title is not None:
-                group.title = title
-            new_group = group.id, group.title
+                existing_group = query.filter(GroupModel.title == title).first()
+                if existing_group:
+                    raise GroupAlreadyExists(existing_group.title)
+                else:
+                    group.title = title
+                    new_group = group.id, group.title
         log.info("Format group: SUCCESS; ID=%r, New title=%r", new_group[0], new_group[1])
         return new_group

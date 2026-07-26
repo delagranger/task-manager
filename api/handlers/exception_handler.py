@@ -1,7 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from exceptions.exceptions import StatusNotFound, GIDNotFound, TIDNotFound, GroupNotFound, SortTypeNotFound, FilterNotExists, IncorrectLength
+from exceptions.exceptions import StatusNotFound, GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExists, SortTypeNotFound, FilterNotExists, IncorrectLength
 
 
 async def group_id_not_found_handler(request: Request, exc: GIDNotFound) -> JSONResponse:
@@ -13,6 +13,10 @@ async def task_id_not_found_handler(request: Request, exc: TIDNotFound) -> JSONR
 
 
 async def group_not_found_handler(request: Request, exc: GroupNotFound) -> JSONResponse:
+    return JSONResponse(status_code=404, content={"Details": str(exc)})
+
+
+async def group_already_exists(request: Request, exc: GroupAlreadyExists) -> JSONResponse:
     return JSONResponse(status_code=404, content={"Details": str(exc)})
 
 

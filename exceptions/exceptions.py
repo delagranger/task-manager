@@ -26,6 +26,12 @@ class GroupNotFound(ValidationError):
         super().__init__(f"Group '{title}' is not found")
 
 
+class GroupAlreadyExists(ValidationError):
+    def __init__(self, title: str) -> None:
+        self.group = title
+        super().__init__(f"Group {title} is already exists")
+
+
 class SortTypeNotFound(ValidationError):
     def __init__(self, sort_type: str, sort_types: list[str]) -> None:
         self.sort_type = sort_type

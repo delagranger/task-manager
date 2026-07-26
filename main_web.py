@@ -7,6 +7,7 @@ from api.routes.pages import router as pages_router
 from api.handlers.exception_handler import (group_id_not_found_handler, 
                                             task_id_not_found_handler, 
                                             group_not_found_handler, 
+                                            group_already_exists,
                                             status_not_found_handler, 
                                             sort_type_not_found_handler, 
                                             filter_not_exists_handler, 
@@ -14,7 +15,8 @@ from api.handlers.exception_handler import (group_id_not_found_handler,
                                             )
 
 from exceptions.exceptions import (StatusNotFound, GIDNotFound, TIDNotFound, 
-                                   GroupNotFound, SortTypeNotFound, FilterNotExists, 
+                                   GroupNotFound, GroupAlreadyExists, 
+                                   SortTypeNotFound, FilterNotExists, 
                                    IncorrectLength
                                    )
 
@@ -27,6 +29,7 @@ app = FastAPI()
 app.add_exception_handler(GIDNotFound, group_id_not_found_handler)
 app.add_exception_handler(TIDNotFound, task_id_not_found_handler)
 app.add_exception_handler(GroupNotFound, group_not_found_handler)
+app.add_exception_handler(GroupAlreadyExists, group_already_exists)
 app.add_exception_handler(StatusNotFound, status_not_found_handler)
 app.add_exception_handler(SortTypeNotFound, sort_type_not_found_handler)
 app.add_exception_handler(FilterNotExists, filter_not_exists_handler)
