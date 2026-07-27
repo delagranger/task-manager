@@ -24,7 +24,24 @@ from config import log_setup
 
 log_setup()
 
-app = FastAPI()
+app = FastAPI(
+    title="Task Manager API",
+    version="1.0",
+    description="""
+REST API для управления задачами и группами.
+
+### Возможности
+
+- создание задач;
+- изменение задач;
+- удаление задач;
+- получение списка задач;
+- создание и управление группами;
+- сортировка и фильтрация результатов.
+
+API разработан на FastAPI с использованием SQLAlchemy и PostgreSQL.
+"""
+)
 
 app.add_exception_handler(GIDNotFound, group_id_not_found_handler)
 app.add_exception_handler(TIDNotFound, task_id_not_found_handler)
@@ -38,4 +55,4 @@ app.add_exception_handler(IncorrectLength, incorrect_length_handler)
 app.include_router(tasks_router, prefix="/api/v1")
 app.include_router(groups_router, prefix="/api/v1")
 app.include_router(pages_router)
-    
+     
