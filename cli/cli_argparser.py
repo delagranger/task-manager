@@ -19,7 +19,6 @@ class CLIArgParser:
         self._init_list_groups()
         self._init_delete_task()
         self._init_delete_group()
-        self._init_set_status()
         self._init_format_task()
         self._init_format_group()
 
