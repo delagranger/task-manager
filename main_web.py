@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from api.routes.tasks import router as tasks_router
 from api.routes.groups import router as groups_router
@@ -33,6 +34,14 @@ REST API для управления задачами и группами.
 
 API разработан на FastAPI с использованием SQLAlchemy и PostgreSQL.
 """
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_exception_handler(GIDNotFound, validation_error_handler)
