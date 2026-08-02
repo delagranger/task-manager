@@ -25,13 +25,19 @@ class App:
             args = self._argparser.parse_arguments()
             match args.command:
                 case "add-task":
-                    id, title, status, group = self._tm.add_task(args.title, args.status, args.group)
-                    self._output.display_task_created(id, title, status, group)
+                    id, title, status, group = self._tm.add_task(
+                        args.title, args.status, args.group,
+                    )
+                    self._output.display_task_created(
+                        id, title, status, group,
+                    )
                 case "add-group":
                     id, title = self._tm.add_group(args.title)
                     self._output.display_group_created(id, title)
                 case "list-tasks":
-                    tasks = self._tm.list_tasks(args.sort, args.filter, args.status, args.group)
+                    tasks = self._tm.list_tasks(
+                        args.sort, args.filter, args.status, args.group,
+                    )
                     self._output.display_tasks(tasks)
                 case "list-groups":
                     groups = self._tm.list_groups(args.sort)
@@ -45,8 +51,12 @@ class App:
                         deleted_id = self._tm.delete_group(group_id)
                         self._output.display_groups_deleted(deleted_id)
                 case "format-task":
-                    ids, title, status, group = self._tm.format_task(args.id, args.title, args.status, args.group)
-                    self._output.display_task_formated(ids, title, status, group)
+                    ids, title, status, group = self._tm.format_task(
+                        args.id, args.title, args.status, args.group,
+                    )
+                    self._output.display_task_formated(
+                        ids, title, status, group,
+                    )
                 case "format-group":
                     id, title = self._tm.format_group(args.id, args.title)
                     self._output.display_group_formated(id, title)

@@ -3,7 +3,12 @@ class Group:
     id: int | None
     tasks: list[str] | None
 
-    def __init__(self, title: str, id: int | None = None, tasks: list[str] | None = None):
+    def __init__(
+        self,
+        title: str,
+        id: int | None = None,
+        tasks: list[str] | None = None,
+    ):
         self.title = title
         self.id = id
         self.tasks = tasks

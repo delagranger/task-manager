@@ -1,5 +1,5 @@
 class ValidationError(Exception):
-        pass
+    pass
 
 
 class StatusNotFound(ValidationError):
@@ -39,8 +39,10 @@ class FilterNotExists(ValidationError):
 
 class IncorrectLength(ValidationError):
     def __init__(self, obj_type: str, cur_length: int, max_length: int) -> None:
-        super().__init__(f"{str(obj_type).capitalize()} length is too large. " \
-                         f"Current length is {cur_length}. Max length for {obj_type} is {max_length}")
+        super().__init__(
+            f"{str(obj_type).capitalize()} length is too large. "
+            f"Current length is {cur_length}. Max length for {obj_type} is {max_length}"
+        )
 
 
 class DefaultGroupProtectedError(ValidationError):
