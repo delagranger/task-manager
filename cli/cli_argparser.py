@@ -10,11 +10,15 @@ class CLIArgParser:
         self._parser = argparse.ArgumentParser(
             prog="main",
             description="Build your Task-List",
-            add_help=True,
+            add_help=False,
+        )
+        self._parser.add_argument(
+            "-h", "--help",
+            action="store_true",
+            help="Show this help message and exit",
         )
         self._subparsers = self._parser.add_subparsers(
             dest="command",
-            required=True,
         )
         self._init_add_task()
         self._init_add_group()

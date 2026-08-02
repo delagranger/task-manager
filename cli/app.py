@@ -21,8 +21,12 @@ class App:
 
 
     def run(self) -> None:
+        args = None
         try:
             args = self._argparser.parse_arguments()
+            if args.help or not args.command:
+                self._output.display_help()
+                return
             match args.command:
                 case "add-task":
                     id, title, status, group = self._tm.add_task(
@@ -63,5 +67,6 @@ class App:
                 case _:
                     self._output.display_incorrect_command(args.command)
         except Exception as e:
-            self._output.display_error(e, args.command)
+            command = args.command if args else "unknown"
+            self._output.display_error(e, command)
             
