@@ -1,4 +1,5 @@
 import logging
+import traceback
 from domain import Task, Group
 
 log = logging.getLogger(__name__)
@@ -54,4 +55,5 @@ class CLIOutput:
 
 
     def display_error(self, error: BaseException, command: str) -> None:
+        traceback.print_exc()
         print(f"Unable to {command}, type '-h' for help\nERROR: {error}")
