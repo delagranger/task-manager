@@ -37,11 +37,13 @@ class App:
                     groups = self._tm.list_groups(args.sort)
                     self._output.display_groups(groups)
                 case "delete-task":
-                    ids = self._tm.delete_task(args.id)
-                    self._output.display_tasks_deleted(ids)
+                    for task_id in args.id:
+                        deleted_id = self._tm.delete_task(task_id)
+                        self._output.display_tasks_deleted(deleted_id)
                 case "delete-group":
-                    ids = self._tm.delete_group(args.id)
-                    self._output.display_groups_deleted(ids)
+                    for group_id in args.id:
+                        deleted_id = self._tm.delete_group(group_id)
+                        self._output.display_groups_deleted(deleted_id)
                 case "format-task":
                     ids, title, status, group = self._tm.format_task(args.id, args.title, args.status, args.group)
                     self._output.display_task_formated(ids, title, status, group)

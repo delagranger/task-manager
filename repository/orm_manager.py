@@ -7,9 +7,11 @@ from .models import GroupModel, TaskModel, Base
 from .session_context_manager import session_scope
 from domain import Group, Task
 
-from exceptions import GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExists
+from exceptions import GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExists, DefaultGroupProtectedError
 
 log = logging.getLogger(__name__)
+
+DEFAULT_GROUP_TITLE = "default group"
 
 class ORMManager:
     def __init__(self):
@@ -22,9 +24,9 @@ class ORMManager:
     def _create_default_group(self) -> None:
         with session_scope(self.Session) as session:
             query = session.query(GroupModel)
-            result = query.filter(GroupModel.title == "default group").first()
+            result = query.filter(GroupModel.title == DEFAULT_GROUP_TITLE).first()
             if not result:
-                group_orm = GroupModel(title="default group")
+                group_orm = GroupModel(title=DEFAULT_GROUP_TITLE)
                 session.add(group_orm)
                 session.flush()
                 log.debug("Insert default group: SUCCESS; %r", group_orm)  
@@ -123,12 +125,13 @@ class ORMManager:
             group = query.filter(GroupModel.id == id).first()
             if not group:
                 raise GIDNotFound(id)
-            else:
-                default_group = query.filter(GroupModel.title == "default group").first()
-                for task in group.tasks:
-                    task.group = default_group
-                    
-                session.delete(group)
+            if group.title == DEFAULT_GROUP_TITLE:
+                raise DefaultGroupProtectedError("delete")
+            default_group = query.filter(GroupModel.title == DEFAULT_GROUP_TITLE).first()
+            for task in group.tasks:
+                task.group = default_group
+                
+            session.delete(group)
         log.info("Delete group: SUCCESS; ID=%r", id)
         return id
 
@@ -159,6 +162,8 @@ class ORMManager:
             group = query.filter(GroupModel.id == id).first()
             if not group:
                 raise GIDNotFound(id)
+            if group.title == DEFAULT_GROUP_TITLE:
+                raise DefaultGroupProtectedError("rename")
             if title is not None:
                 existing_group = query.filter(GroupModel.title == title).first()
                 if existing_group:

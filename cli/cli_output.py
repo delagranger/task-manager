@@ -33,12 +33,12 @@ class CLIOutput:
         print(f"Group created; ID={id}, Title={title}")
 
 
-    def display_tasks_deleted(self, ids: list[int]) -> None:
-        print(f"Tasks deleted; IDs={ids}")
+    def display_tasks_deleted(self, id: int) -> None:
+        print(f"Task deleted; ID={id}")
 
 
-    def display_groups_deleted(self, ids: list[int]) -> None:
-        print(f"Groups deleted; IDs={ids}")
+    def display_groups_deleted(self, id: int) -> None:
+        print(f"Group deleted; ID={id}")
            
 
     def display_task_formated(self, ids: list[int], title: str, status: str, group: str) -> None:
