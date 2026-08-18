@@ -6,7 +6,9 @@ __all__ = [
     "GIDNotFound",
     "TIDNotFound",
     "GroupNotFound",
+    "GroupAlreadyExists",
     "SortTypeNotFound",
     "FilterNotExists",
     "IncorrectLength",
+    "DefaultGroupProtectedError",
 ]

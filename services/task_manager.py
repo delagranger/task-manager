@@ -2,7 +2,12 @@ import logging
 
 from domain import Task, Group
 from repository import ORMManager
-from exceptions import (FilterNotExists, SortTypeNotFound, IncorrectLength, StatusNotFound)
+from exceptions import (
+    FilterNotExists,
+    SortTypeNotFound,
+    IncorrectLength,
+    StatusNotFound,
+)
 
 log = logging.getLogger(__name__)
 
@@ -12,18 +17,19 @@ STATUSES = ['active', 'frozen', 'finished']
 GROUPS_SORT_TYPES = ['id', 'title']
 TASKS_SORT_TYPES = ['id', 'title', 'status', 'group_id']
 
+
 class TaskManager:
     def __init__(self):
         self._orm_manager = ORMManager()
 
-
-    def add_task(self, title: str, status: str, group: str) -> tuple[int, str, str, str]:  
+    def add_task(
+        self, title: str, status: str, group: str,
+    ) -> tuple[int, str, str, str]:
         title, cur_length = self._ensure_title_is_correct("task", title)
-        status = self._ensure_status_is_correct(status)    
+        status = self._ensure_status_is_correct(status)
         task = Task(title, status, group)
         id, title, status, group = self._orm_manager.add_task(task)
         return id, title, status, group
-
 
     def add_group(self, title: str) -> tuple[int, str]:
         title, cur_length = self._ensure_title_is_correct("group", title)
@@ -31,124 +37,149 @@ class TaskManager:
         id, title = self._orm_manager.add_group(group)
         return id, title
 
-
-    def list_tasks(self, sort_type: str, filtered: bool, status: str, group: str) -> list[Task]:
+    def list_tasks(
+        self, sort_type: str, filtered: bool, status: str, group: str,
+    ) -> list[Task]:
         if sort_type is not None:
             sort_type = self._ensure_sort_type_is_correct("task", sort_type)
         else:
             sort_type = "id"
         self._ensure_filter_exists(filtered, status, group)
-        tasks = self._orm_manager.list_tasks(sort_type, filtered, status, group)
+        tasks = self._orm_manager.list_tasks(
+            sort_type, filtered, status, group,
+        )
         return tasks
-
 
     def list_groups(self, sort_type: str) -> list[Group]:
         sort_type = self._ensure_sort_type_is_correct("group", sort_type)
         groups = self._orm_manager.list_groups(sort_type)
         return groups
 
-   
     def delete_task(self, id: int) -> int:
         id = self._orm_manager.delete_task(id)
         return id
-
 
     def delete_group(self, id: int) -> int:
         id = self._orm_manager.delete_group(id)
         return id
 
-
-    def patch_task(self, id: int, title: str | None, status: str | None, group: str | None) -> tuple[int, str | None, str | None, str | None]:
+    def patch_task(
+        self,
+        id: int,
+        title: str | None,
+        status: str | None,
+        group: str | None,
+    ) -> tuple[int, str | None, str | None, str | None]:
         if title is not None:
             title, cur_length = self._ensure_title_is_correct("task", title)
         if status is not None:
             status = self._ensure_status_is_correct(status)
         id, title, status, group = self._orm_manager.patch_task(
-            id, title, status, group
+            id, title, status, group,
         )
         return id, title, status, group
-    
 
-    def patch_group(self, id: int, title: str | None) -> tuple[int, str | None]:
+    def patch_group(
+        self, id: int, title: str | None,
+    ) -> tuple[int, str | None]:
         if title is not None:
             title, cur_length = self._ensure_title_is_correct("group", title)
         id, title = self._orm_manager.patch_group(id, title)
         return id, title
 
-
-    def _ensure_sort_type_is_correct(self, obj_type: str, sort_type: str) -> str:
+    def _ensure_sort_type_is_correct(
+        self, obj_type: str, sort_type: str,
+    ) -> str:
         if obj_type == "task" and sort_type not in TASKS_SORT_TYPES:
             sort_types = TASKS_SORT_TYPES
-            log.error("Ensure sort type is correct: FAILED; Sort type=%r", 
-                      sort_type,
+            log.error(
+                "Ensure sort type is correct: FAILED; Sort type=%r",
+                sort_type,
             )
             raise SortTypeNotFound(sort_type, sort_types)
         elif obj_type == "group" and sort_type not in GROUPS_SORT_TYPES:
             sort_types = GROUPS_SORT_TYPES
-            log.error("Ensure sort type is correct: FAILED; Sort type=%r", 
-                      sort_type,
+            log.error(
+                "Ensure sort type is correct: FAILED; Sort type=%r",
+                sort_type,
             )
             raise SortTypeNotFound(sort_type, sort_types)
         else:
-            log.debug("Ensure sort type is correct: SUCCESS; Sort type=%r", 
-                      sort_type,
+            log.debug(
+                "Ensure sort type is correct: SUCCESS; Sort type=%r",
+                sort_type,
             )
             return sort_type
-    
 
-    def _ensure_filter_exists(self, filtered: bool, status: str, group: str) -> tuple[str, str] | None:
+    def _ensure_filter_exists(
+        self, filtered: bool, status: str, group: str,
+    ) -> tuple[str, str] | None:
         if filtered and (status or group):
-            log.debug("Ensure filter exists: SUCCESS; Filter=%r, Status=%r, Group=%r", 
-                      filtered, status, group,
+            log.debug(
+                "Ensure filter exists: SUCCESS; "
+                "Filter=%r, Status=%r, Group=%r",
+                filtered, status, group,
             )
             return status, group
         elif filtered and not status and not group:
-            log.error("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
-                      filtered, status, group,
+            log.error(
+                "Ensure filter exists: FAILED; "
+                "Filter=%r, Status=%r, Group=%r",
+                filtered, status, group,
             )
             raise FilterNotExists()
         elif not filtered and (status or group):
-            log.error("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
-                      filtered, status, group,
+            log.error(
+                "Ensure filter exists: FAILED; "
+                "Filter=%r, Status=%r, Group=%r",
+                filtered, status, group,
             )
             raise FilterNotExists()
         else:
-            log.warning("Ensure filter exists: FAILED; Filter=%r, Status=%r, Group=%r", 
-                        filtered, status, group,
+            log.warning(
+                "Ensure filter exists: FAILED; "
+                "Filter=%r, Status=%r, Group=%r",
+                filtered, status, group,
             )
 
-
-    def _ensure_title_is_correct(self, obj_type: str, title: str) -> tuple[str, int]:
+    def _ensure_title_is_correct(
+        self, obj_type: str, title: str,
+    ) -> tuple[str, int]:
         cur_length = len(title)
         if obj_type == "group" and len(title) > MAX_GROUP_LENGTH:
             max_length = MAX_GROUP_LENGTH
-            log.error("Ensure group title is correct: FAILED; Title=%r, length=%r", 
-                      title, cur_length,
+            log.error(
+                "Ensure group title is correct: FAILED; "
+                "Title=%r, length=%r",
+                title, cur_length,
             )
             raise IncorrectLength(obj_type, cur_length, max_length)
         elif obj_type == "task" and len(title) > MAX_TASK_LENGTH:
             max_length = MAX_TASK_LENGTH
-            log.error("Ensure task title is correct: FAILED; Title=%r, length=%r", 
-                      title, cur_length,
+            log.error(
+                "Ensure task title is correct: FAILED; "
+                "Title=%r, length=%r",
+                title, cur_length,
             )
             raise IncorrectLength(obj_type, cur_length, max_length)
         else:
-            log.debug("Ensure title is correct: SUCCESS; Title=%r, length=%r", 
-                      title, cur_length,
+            log.debug(
+                "Ensure title is correct: SUCCESS; Title=%r, length=%r",
+                title, cur_length,
             )
             return title, cur_length
-
 
     def _ensure_status_is_correct(self, status: str) -> str:
         if status not in STATUSES:
             statuses = STATUSES
-            log.error("Ensure status is correct: FAILED; Status=%r", 
-                      status,
+            log.error(
+                "Ensure status is correct: FAILED; Status=%r",
+                status,
             )
             raise StatusNotFound(status, statuses)
         else:
-            log.debug("Ensure status is correct: SUCCESS; Status=%r", 
-                      status,
+            log.debug(
+                "Ensure status is correct: SUCCESS; Status=%r",
+                status,
             )
             return status
-        

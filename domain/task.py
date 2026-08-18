@@ -4,7 +4,9 @@ class Task:
     id: int | None
     group: str
 
-    def __init__(self, title: str, status: str, group: str, id: int | None = None):
+    def __init__(
+        self, title: str, status: str, group: str, id: int | None = None,
+    ):
         self.title = title
         self.status = status
         self.id = id

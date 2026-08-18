@@ -21,35 +21,52 @@ class App:
 
 
     def run(self) -> None:
+        args = None
         try:
             args = self._argparser.parse_arguments()
+            if args.help or not args.command:
+                self._output.display_help()
+                return
             match args.command:
                 case "add-task":
-                    id, title, status, group = self._tm.add_task(args.title, args.status, args.group)
-                    self._output.display_task_created(id, title, status, group)
+                    id, title, status, group = self._tm.add_task(
+                        args.title, args.status, args.group,
+                    )
+                    self._output.display_task_created(
+                        id, title, status, group,
+                    )
                 case "add-group":
                     id, title = self._tm.add_group(args.title)
                     self._output.display_group_created(id, title)
                 case "list-tasks":
-                    tasks = self._tm.list_tasks(args.sort, args.filter, args.status, args.group)
+                    tasks = self._tm.list_tasks(
+                        args.sort, args.filter, args.status, args.group,
+                    )
                     self._output.display_tasks(tasks)
                 case "list-groups":
                     groups = self._tm.list_groups(args.sort)
                     self._output.display_groups(groups)
                 case "delete-task":
-                    ids = self._tm.delete_task(args.id)
-                    self._output.display_tasks_deleted(ids)
+                    for task_id in args.id:
+                        deleted_id = self._tm.delete_task(task_id)
+                        self._output.display_tasks_deleted(deleted_id)
                 case "delete-group":
-                    ids = self._tm.delete_group(args.id)
-                    self._output.display_groups_deleted(ids)
+                    for group_id in args.id:
+                        deleted_id = self._tm.delete_group(group_id)
+                        self._output.display_groups_deleted(deleted_id)
                 case "format-task":
-                    ids, title, status, group = self._tm.format_task(args.id, args.title, args.status, args.group)
-                    self._output.display_task_formated(ids, title, status, group)
+                    ids, title, status, group = self._tm.format_task(
+                        args.id, args.title, args.status, args.group,
+                    )
+                    self._output.display_task_formated(
+                        ids, title, status, group,
+                    )
                 case "format-group":
                     id, title = self._tm.format_group(args.id, args.title)
                     self._output.display_group_formated(id, title)
                 case _:
                     self._output.display_incorrect_command(args.command)
         except Exception as e:
-            self._output.display_error(e, args.command)
+            command = args.command if args else "unknown"
+            self._output.display_error(e, command)
             
