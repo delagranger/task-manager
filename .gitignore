@@ -8,7 +8,6 @@ __pycache__/
 venv/
 env/
 .venv/
-.ini
 
 # IDE
 .vscode/
@@ -29,3 +28,4 @@ dist/
 
 # Other
 tasks.txt
+alembic.ini
