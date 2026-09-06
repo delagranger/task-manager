@@ -20,6 +20,7 @@ class TaskModel(Base):
     status: Mapped[str] = mapped_column(String(), nullable=False)
     group_id: Mapped[int | None] = mapped_column(ForeignKey("groups.id", ondelete="SET NULL"), nullable=True)
     group: Mapped[GroupModel] = relationship(back_populates="tasks")
+    priority: Mapped[str] = mapped_column(String(10), nullable=True)
 
     def __repr__(self) -> str:
         return f"Task(ID={self.id}, title={self.title}, status={self.status}, group={self.group})"
