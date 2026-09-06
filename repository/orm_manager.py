@@ -1,8 +1,9 @@
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import joinedload
 import logging
 
-from config import build_engine
+from config.config import get_database_url
 from .models import GroupModel, TaskModel, Base
 from .session_context_manager import session_scope
 from domain import Group, Task
@@ -15,7 +16,7 @@ DEFAULT_GROUP_TITLE = "default group"
 
 class ORMManager:
     def __init__(self):
-        self._engine = build_engine()
+        self._engine = create_engine(get_database_url())
         Base.metadata.create_all(self._engine)
         self.Session = sessionmaker(bind=self._engine)
         self._create_default_group()
