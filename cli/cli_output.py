@@ -50,6 +50,14 @@ class CLIOutput:
         print(f"Group {id} formated. New title is {title}")
 
 
+    def display_registration_complete(self, id: int, user_name: str) -> None:
+        print(f"Registration complete! User's data: ID={id}, UserName={user_name}")
+
+
+    def display_login_complete(self, id: int, user_name: str) -> None:
+        print("Login complete! User's data: ID={id}, UserName={user_name}")
+        
+
     def display_incorrect_command(self, command: str) -> None:
         print(f"Incorrect command! Command {command} is not exists") 
 
