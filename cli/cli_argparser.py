@@ -28,6 +28,8 @@ class CLIArgParser:
         self._init_delete_group()
         self._init_format_task()
         self._init_format_group()
+        self._init_register()
+        self._init_login()
 
     def parse_arguments(self) -> Namespace:
         args = self._parser.parse_args()
@@ -181,4 +183,36 @@ class CLIArgParser:
             "-t", "--title",
             nargs='?',
             help="Format group`s title",
+        )
+
+    def _init_register(self) -> None:
+        parser_register = self._subparsers.add_parser(
+            "register",
+            help="Create a new user",
+        )
+        parser_register.add_argument(
+            "-l", "--login",
+            nargs=1,
+            help="User's login",
+        )
+        parser_register.add_argument(
+            "-p", "--password",
+            nargs=1,
+            help="User's password",
+        )
+
+    def _init_login(self) -> None:
+        parser_login = self._subparsers.add_parser(
+            "login",
+            help="Login into created account",
+        )
+        parser_login.add_argument(
+            "-l", "--login",
+            nargs=1,
+            help="User's login",
+        )
+        parser_login.add_argument(
+            "-p", "--password",
+            nargs=1,
+            help="User's login",
         )
