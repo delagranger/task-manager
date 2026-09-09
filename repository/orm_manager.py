@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 import logging
 
 from config.config import get_database_url
-from .models import GroupModel, TaskModel, Base
+from .models import UserModel, GroupModel, TaskModel, Base
 from .session_context_manager import session_scope
 from domain import Group, Task
 
@@ -13,21 +13,35 @@ from exceptions import GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExis
 log = logging.getLogger(__name__)
 
 DEFAULT_GROUP_TITLE = "default group"
+DEFAULT_USER_NAME = "default user"
+DEFAULT_USER_PASSWORD = "qwerty123"
 
 class ORMManager:
     def __init__(self):
         self._engine = create_engine(get_database_url())
         Base.metadata.create_all(self._engine)
         self.Session = sessionmaker(bind=self._engine)
-        self._create_default_group()
+        default_user_id = self._create_default_user()
+        self._create_default_group(default_user_id)
+
+    def _create_default_user(self) -> None:
+        with session_scope(self.Session) as session:
+            query = session.query(UserModel)
+            result = query.filter(UserModel.login==DEFAULT_USER_NAME).first()
+            if not result:
+                user_orm = UserModel(login=DEFAULT_USER_NAME, password_hash=DEFAULT_USER_PASSWORD)
+                session.add(user_orm)
+                session.flush()
+                log.debug("Insert default user: SUCCESS; %r", user_orm)  
+                return user_orm.id
 
 
-    def _create_default_group(self) -> None:
+    def _create_default_group(self, default_user_id) -> None:
         with session_scope(self.Session) as session:
             query = session.query(GroupModel)
             result = query.filter(GroupModel.title == DEFAULT_GROUP_TITLE).first()
             if not result:
-                group_orm = GroupModel(title=DEFAULT_GROUP_TITLE)
+                group_orm = GroupModel(user_id=default_user_id, title=DEFAULT_GROUP_TITLE)
                 session.add(group_orm)
                 session.flush()
                 log.debug("Insert default group: SUCCESS; %r", group_orm)  

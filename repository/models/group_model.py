@@ -11,6 +11,7 @@ from .base import Base
 
 if TYPE_CHECKING:
     from .task_model import TaskModel
+    from .user_model import UserModel
 
 class GroupModel(Base):
     __tablename__ = "groups"
@@ -18,7 +19,7 @@ class GroupModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     title: Mapped[str] = mapped_column(String(25), unique=True, nullable=False)
-    user: Mapped[str] = relationship(back_populates="groups")
+    user: Mapped[UserModel] = relationship(back_populates="groups")
     tasks: Mapped[list[TaskModel]] = relationship(back_populates="group", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
