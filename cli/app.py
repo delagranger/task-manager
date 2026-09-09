@@ -4,6 +4,7 @@ import logging
 from .cli_argparser import CLIArgParser
 from .cli_output import CLIOutput
 from services import TaskManager
+from auth import AuthManager
 
 log = logging.getLogger(__name__)
 
@@ -13,6 +14,7 @@ class App:
             self._argparser = CLIArgParser()
             self._output = CLIOutput()
             self._tm = TaskManager()
+            self._auth = AuthManager()
             log.debug("Init classes: SUCCESS")
         except Exception as e:
             log.critical("Init classes: FAILED\nERROR: %s", e)
@@ -64,6 +66,12 @@ class App:
                 case "format-group":
                     id, title = self._tm.format_group(args.id, args.title)
                     self._output.display_group_formated(id, title)
+                case "register":
+                    id, user_name = self._auth.register(args.login, args.password)
+                    self._output.display_registration_complete(id, user_name)
+                case "login":
+                    id, user_name = self._auth.login(args.login, args.password)
+                    self._output.display_login_complete(id, user_name)
                 case _:
                     self._output.display_incorrect_command(args.command)
         except Exception as e:
