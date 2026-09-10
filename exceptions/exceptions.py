@@ -48,3 +48,8 @@ class IncorrectLength(ValidationError):
 class DefaultGroupProtectedError(ValidationError):
     def __init__(self, action: str) -> None:
         super().__init__(f"Cannot {action} the default group. The default group is protected.")
+
+
+class DifferentPasswords(ValidationError):
+    def __init__(self) -> None:
+        super().__init__(f"Passwords are different! Rewrite the passwords so that they are identical")

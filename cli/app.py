@@ -67,11 +67,11 @@ class App:
                     id, title = self._tm.format_group(args.id, args.title)
                     self._output.display_group_formated(id, title)
                 case "register":
-                    id, user_name = self._auth.register(args.login, args.password)
-                    self._output.display_registration_complete(id, user_name)
+                    id, login = self._auth.register(args.login, args.passwords)
+                    self._output.display_registration_complete(id, login)
                 case "login":
-                    id, user_name = self._auth.login(args.login, args.password)
-                    self._output.display_login_complete(id, user_name)
+                    id, login = self._auth.login(args.login, args.password)
+                    self._output.display_login_complete(id, login)
                 case _:
                     self._output.display_incorrect_command(args.command)
         except Exception as e:

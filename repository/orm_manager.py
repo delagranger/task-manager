@@ -24,6 +24,7 @@ class ORMManager:
         default_user_id = self._create_default_user()
         self._create_default_group(default_user_id)
 
+
     def _create_default_user(self) -> None:
         with session_scope(self.Session) as session:
             query = session.query(UserModel)
@@ -45,6 +46,10 @@ class ORMManager:
                 session.add(group_orm)
                 session.flush()
                 log.debug("Insert default group: SUCCESS; %r", group_orm)  
+
+
+    def add_user(self) -> tuple[int, str]:
+        pass
 
 
     def add_task(self, task: Task) -> tuple[int, str, str, str]:
