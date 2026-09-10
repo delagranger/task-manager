@@ -50,11 +50,10 @@ class ORMManager:
 
     def register_user(self, user: User) -> tuple[int, str]:
         with session_scope(self.Session) as session:
-            query = session.query(UserModel)
-            user_orm = UserModel(login=user.login, password_hash=user.password)
+            user_orm = UserModel(login=user.login, password_hash=user.password_hash)
             session.add(user_orm)
             session.flush()
-            log.debug("Insert user: SUCCESS; %r", user_orm.login)
+            log.debug("Insert user: SUCCESS; id=%s, login=%s", user_orm.id, user_orm.login)
             return user_orm.id, user_orm.login
 
 

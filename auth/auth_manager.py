@@ -1,4 +1,5 @@
 import logging
+from argon2 import PasswordHasher
 
 from domain import User
 from repository import ORMManager
@@ -12,20 +13,22 @@ MAX_PASSWORD_LENGTH = 20
 class AuthManager:
     def __init__(self):
         self._orm_manager = ORMManager()
+        self._hasher = PasswordHasher()
 
     def register(self, login: str, passwords: list):
         login = self._ensure_length_is_correct("login", login)
-
         password = self._compare_passwords(passwords)
         password = self._ensure_length_is_correct("password", password)
-        # password_hash = self._hash_password(password)
-
-        user = User(login, password) # change password to password_hash
+        password_hash = self._hash_password(password)
+        user = User(login, password_hash)
         id, login = self._orm_manager.register_user(user)
-
         return id, login
 
-    def _hash_password(self, password: str):
+    def _hash_password(self, password: str) -> str:
+        password_hash = self._hasher.hash(password)
+        return password_hash
+
+    def _compare_hash(self):
         pass
 
     def _compare_passwords(self, passwords: list):

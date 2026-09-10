@@ -16,7 +16,7 @@ class UserModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     login: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(50), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     groups: Mapped[list[GroupModel]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
