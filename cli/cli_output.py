@@ -79,6 +79,8 @@ class CLIOutput:
       delete-group   Удалить группу(ы) по ID
       format-task    Изменить задачу(и)
       format-group   Переименовать группу
+      register       Создать нового пользователя
+      login          Войти в созданный аккаунт
 
     ── add-task ─────────────────────────────────────────────
       python main_cli.py add-task [-t TITLE] [-s STATUS] [-g GROUP]
@@ -120,6 +122,16 @@ class CLIOutput:
       python main_cli.py format-group <id> [-t TITLE]
         id          ID группы для переименования
         -t, --title  Новое название группы
+
+    ── register ──────────────────────────────────────────────
+      python main_cli.py register -l LOGIN -p PASSWORD PASSWORD
+        -l, --login    Логин пользователя
+        -p, --password Пароль пользователя (вводится дважды для подтверждения)
+
+    ── login ─────────────────────────────────────────────────
+      python main_cli.py login -l LOGIN -p PASSWORD
+        -l, --login    Логин пользователя
+        -p, --password Пароль пользователя
 
     Защита default group:
       Группу "default group" нельзя удалить или переименовать.

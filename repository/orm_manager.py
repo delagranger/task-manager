@@ -6,7 +6,7 @@ import logging
 from config.config import get_database_url
 from .models import UserModel, GroupModel, TaskModel, Base
 from .session_context_manager import session_scope
-from domain import Group, Task
+from domain import User, Group, Task
 
 from exceptions import GIDNotFound, TIDNotFound, GroupNotFound, GroupAlreadyExists, DefaultGroupProtectedError
 
@@ -48,8 +48,14 @@ class ORMManager:
                 log.debug("Insert default group: SUCCESS; %r", group_orm)  
 
 
-    def add_user(self) -> tuple[int, str]:
-        pass
+    def register_user(self, user: User) -> tuple[int, str]:
+        with session_scope(self.Session) as session:
+            query = session.query(UserModel)
+            user_orm = UserModel(login=user.login, password_hash=user.password)
+            session.add(user_orm)
+            session.flush()
+            log.debug("Insert user: SUCCESS; %r", user_orm.login)
+            return user_orm.id, user_orm.login
 
 
     def add_task(self, task: Task) -> tuple[int, str, str, str]:

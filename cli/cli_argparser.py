@@ -214,5 +214,5 @@ class CLIArgParser:
         parser_login.add_argument(
             "-p", "--password",
             nargs=1,
-            help="User's login",
+            help="User's password",
         )

@@ -10,7 +10,7 @@ MAX_LOGIN_LENGTH = 20
 MAX_PASSWORD_LENGTH = 20
 
 class AuthManager:
-    def __int__(self):
+    def __init__(self):
         self._orm_manager = ORMManager()
 
     def register(self, login: str, passwords: list):
@@ -19,9 +19,9 @@ class AuthManager:
         password = self._compare_passwords(passwords)
         password = self._ensure_length_is_correct("password", password)
         # password_hash = self._hash_password(password)
-        
-        user = User(login, password)
-        id, login = self._orm_manager.add_user(user)
+
+        user = User(login, password) # change password to password_hash
+        id, login = self._orm_manager.register_user(user)
 
         return id, login
 
@@ -59,6 +59,6 @@ class AuthManager:
                 "Ensure %s length is correct: SUCCESS; Length=%r",
                 obj_type, cur_length,
             )
-            return obj, cur_length
+            return obj
 
 

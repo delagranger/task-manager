@@ -67,7 +67,7 @@ class App:
                     id, title = self._tm.format_group(args.id, args.title)
                     self._output.display_group_formated(id, title)
                 case "register":
-                    id, login = self._auth.register(args.login, args.passwords)
+                    id, login = self._auth.register(args.login[0], args.password)
                     self._output.display_registration_complete(id, login)
                 case "login":
                     id, login = self._auth.login(args.login, args.password)
