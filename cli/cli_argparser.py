@@ -197,7 +197,7 @@ class CLIArgParser:
         )
         parser_register.add_argument(
             "-p", "--password",
-            nargs=1,
+            nargs=2,
             help="User's password",
         )
 
