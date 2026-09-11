@@ -4,6 +4,7 @@ from argon2 import PasswordHasher
 from domain import User
 from repository import ORMManager
 from exceptions import IncorrectLength, DifferentPasswords
+from .jwt_manager import JWTManager
 
 log = logging.getLogger(__name__)
 
@@ -14,6 +15,7 @@ class AuthManager:
     def __init__(self):
         self._orm_manager = ORMManager()
         self._hasher = PasswordHasher()
+        self._jwt_manager = JWTManager()
 
     def register(self, login: str, passwords: list):
         login = self._ensure_length_is_correct("login", login)
@@ -24,12 +26,30 @@ class AuthManager:
         id, login = self._orm_manager.register_user(user)
         return id, login
 
+    def login(self, login: str, password: str):
+        login = self._ensure_length_is_correct("login", login)
+        password = self._ensure_length_is_correct("password", password)
+
+        id, login, true_password_hash = self._orm_manager.get_user(login)
+
+        self._compare_hash(true_password_hash, password)
+
+        self._jwt_manager.create_jwt(id)
+
+        return "correct", "correct"
+
+
     def _hash_password(self, password: str) -> str:
         password_hash = self._hasher.hash(password)
         return password_hash
 
-    def _compare_hash(self):
-        pass
+    def _compare_hash(self, true_password_hash, password):
+        if self._hasher.verify(true_password_hash, password):
+            log.debug("Compare passwords hash: SUCCESS;")
+            return True
+        else:
+            log.error("Compare password hash: FAILED;")
+            raise DifferentPasswords()
 
     def _compare_passwords(self, passwords: list):
         if passwords[0] != passwords[1]:

@@ -70,7 +70,7 @@ class App:
                     id, login = self._auth.register(args.login[0], args.password)
                     self._output.display_registration_complete(id, login)
                 case "login":
-                    id, login = self._auth.login(args.login, args.password)
+                    id, login = self._auth.login(args.login[0], args.password[0])
                     self._output.display_login_complete(id, login)
                 case _:
                     self._output.display_incorrect_command(args.command)

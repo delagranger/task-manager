@@ -57,6 +57,14 @@ class ORMManager:
             return user_orm.id, user_orm.login
 
 
+    def get_user(self, login: str) -> tuple[int, str, str]:
+        with session_scope(self.Session) as session:
+            query = session.query(UserModel)
+            user = query.filter(UserModel.login == login).first()
+            log.debug("Get user: SUCCESS; id=%s, login=%s", user.id, user.login)
+            return user.id, user.login, user.password_hash
+
+
     def add_task(self, task: Task) -> tuple[int, str, str, str]:
         with session_scope(self.Session) as session:
             found_group = (

@@ -32,3 +32,13 @@ def get_database_url() -> str:
     url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
 
     return url
+
+def get_jwt_token_validity_period() -> int:
+    load_dotenv()
+    token_validity_period = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES"))
+    return token_validity_period
+
+def get_jwt_secret_key() -> str:
+    load_dotenv()
+    jwt_secret_key = os.getenv("JWT_SECRET_KEY")
+    return jwt_secret_key
