@@ -29,3 +29,4 @@ dist/
 # Other
 tasks.txt
 alembic.ini
+auth.json
